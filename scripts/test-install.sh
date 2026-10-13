@@ -80,6 +80,7 @@ printf '%s\n' "$*" >> "$TEST_LOG/curl"
 cat <<'INSTALLER'
 #!/bin/sh
 printf '%s\n' 'managed install invoked' >> "$TEST_LOG/managed"
+rm -f "$TEST_BIN/pi"
 cat > "$TEST_BIN/pi" <<'PI'
 #!/bin/sh
 [ "$1" = update ] && [ "$2" = --all ] || exit 2
@@ -170,6 +171,18 @@ contains "$migration_home/.config/mac-setup/zsh-plugins" 'zsh-autosuggestions'
 contains "$migration_home/.config/mac-setup/zsh-plugins" 'zsh-vi-mode'
 absent "$migration_home/.config/mac-setup/zsh-plugins" 'zsh-history-substring-search'
 absent "$migration_home/.config/mac-setup/zsh-plugins" 'fast-syntax-highlighting'
+
+# An npm Pi outside the active NVM prefix is detected from its bin symlink.
+npm_package="$TMP/homebrew/lib/node_modules/@earendil-works/pi-coding-agent/dist/bundle/cli.js"
+npm_log="$TMP/npm-log"
+npm_home="$TMP/npm-home"
+mkdir -p "$(dirname "$npm_package")" "$npm_log" "$npm_home"
+: > "$npm_package"
+ln -sf "$npm_package" "$BIN/pi"
+run_installer "$npm_home" "$TMP/npm.out" v22.19.0 22.19.0 0 "$npm_log"
+contains "$npm_log/curl" 'pi.dev/install.sh'
+contains "$npm_log/managed" 'managed install invoked'
+contains "$npm_log/pi" 'false update --all'
 
 # Selected plugins load; declined plugins stay unloaded.
 runtime_config="$TMP/runtime-config"

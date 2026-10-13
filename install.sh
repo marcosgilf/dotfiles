@@ -169,7 +169,20 @@ if (( pi_supported )); then
   if npm list --global --depth=0 @mariozechner/pi-coding-agent >/dev/null 2>&1; then
     npm uninstall --global @mariozechner/pi-coding-agent
   fi
-  if npm list --global --depth=0 @earendil-works/pi-coding-agent >/dev/null 2>&1 || ! command -v pi >/dev/null 2>&1; then
+  # NPM Pi can live outside active NVM prefix; detect its bin symlink too.
+  pi_path=$(command -v pi || true)
+  while [[ -n "$pi_path" && -L "$pi_path" ]]; do
+    pi_target=$(readlink "$pi_path")
+    if [[ "$pi_target" == /* ]]; then
+      pi_path=$pi_target
+    else
+      pi_path="${pi_path:h}/$pi_target"
+    fi
+  done
+  if npm list --global --depth=0 @earendil-works/pi-coding-agent >/dev/null 2>&1 ||
+    [[ -z "$pi_path" ||
+      "$pi_path" == */node_modules/@earendil-works/pi-coding-agent/* ||
+      "$pi_path" == */node_modules/@mariozechner/pi-coding-agent/* ]]; then
     # Keep upstream installer from auto-launching Pi; setup prints launch steps.
     curl -fsSL https://pi.dev/install.sh | sh | tee
     rehash
