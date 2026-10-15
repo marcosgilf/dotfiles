@@ -201,7 +201,12 @@ function buildUsageModal(usage: CopilotUsage): { rows: FooterRow[]; clipboardTex
 	];
 	if (progress === undefined) rows.push({ text: "" });
 	else rows.push({ text: "" }, { text: "", progress, style: progress >= 90 ? "warning" : "success" }, { text: "" });
-	rows.push({ text: resetText }, { text: "" }, { text: "r refresh · c plain copy · mouse select = layout · Esc/Enter close" });
+	rows.push(
+		{ text: resetText },
+		{ text: "" },
+		{ text: "Mouse selection copies layout" },
+		{ text: "r refreshes · c copies plain text · Esc/Enter closes" },
+	);
 	return { rows, clipboardText: [title, planText, quotaText, resetText].join("\n") };
 }
 
