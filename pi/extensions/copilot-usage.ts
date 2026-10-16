@@ -204,7 +204,6 @@ function buildUsageModal(usage: CopilotUsage): { rows: FooterRow[]; clipboardTex
 	rows.push(
 		{ text: resetText },
 		{ text: "" },
-		{ text: "Mouse selection copies layout" },
 		{ text: "r refreshes · c copies plain text · Esc/Enter closes" },
 	);
 	return { rows, clipboardText: [title, planText, quotaText, resetText].join("\n") };
