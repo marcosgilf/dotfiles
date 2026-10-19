@@ -1,6 +1,11 @@
-# mac-setup
+# macOS dotfiles
 
 Opinionated macOS development environment with one shared Tokyo Night theme.
+
+Application configs live in top-level directories (`zsh/`, `nvim/`, `ghostty/`,
+`herdr/`, `superfile/`, and `pi/`). Setup scripts, tests, and shared theme data
+stay separate. Installer handles app-specific paths and backs up existing
+configs before it links them.
 
 ## Included tools
 
@@ -25,8 +30,8 @@ Opinionated macOS development environment with one shared Tokyo Night theme.
 
   Installer shows descriptions and asks which plugins to enable on first
   install. Updates detect existing plugin checkouts and preserve choices without
-  prompting. Selected plugins clone on first shell startup; choices live in
-  `$XDG_CONFIG_HOME/mac-setup/zsh-plugins` and can be edited later.
+  prompting. Selected plugins clone on first shell startup; choices remain at
+  `$XDG_CONFIG_HOME/mac-setup/zsh-plugins` to preserve existing installs.
 - **[Neovim](https://github.com/neovim/neovim)** — editor configured with:
   - [LazyVim](https://github.com/LazyVim/LazyVim) — opinionated setup and plugin
     collection.
@@ -82,8 +87,8 @@ Wait for installation to finish, then clone and run setup. Installer installs
 Homebrew if missing.
 
 ```sh
-git clone https://github.com/marcosgilf/mac-setup ~/mac-setup
-~/mac-setup/install.sh
+git clone https://github.com/marcosgilf/dotfiles ~/dotfiles
+~/dotfiles/install.sh
 ```
 
 Installer:
@@ -121,7 +126,7 @@ Start a new shell after installation. Neovim plugins install on first launch;
 ## Update
 
 ```sh
-cd ~/mac-setup
+cd ~/dotfiles
 git pull
 ./install.sh
 ```

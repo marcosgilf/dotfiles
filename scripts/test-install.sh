@@ -2,7 +2,7 @@
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-TMP=$(mktemp -d "${TMPDIR:-/tmp}/mac-setup-test.XXXXXX")
+TMP=$(mktemp -d "${TMPDIR:-/tmp}/dotfiles-test.XXXXXX")
 trap 'rm -rf "$TMP"' EXIT HUP INT TERM
 BIN="$TMP/bin"
 FAKE_BREW_PREFIX="$TMP/homebrew"
