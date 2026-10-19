@@ -18,7 +18,13 @@ cat > "$BIN/brew" <<'EOF'
 case "$1" in
   shellenv) printf 'export HOMEBREW_PREFIX="%s"\n' "$FAKE_BREW_PREFIX" ;;
   --prefix) printf '%s/opt/nvm\n' "$FAKE_BREW_PREFIX" ;;
-  list) exit 0 ;;
+  list)
+    if [ "$2" = --cask ] && [ "$3" = handy ] && [ "${FAKE_HANDY_INSTALLED:-1}" = 0 ]; then
+      exit 1
+    fi
+    exit 0
+    ;;
+  install) printf '%s\n' "$*" >> "$TEST_LOG/brew" ;;
   bundle)
     printf 'Using bat\n'
     printf '\033[32m`brew bundle` complete! 11 Brewfile dependencies now installed.\033[0m\n'
@@ -96,6 +102,7 @@ run_installer() {
   home=$1
   output=$2
   answers=${7:-$TMP/plugin-answers}
+  handy_installed=${8:-1}
   HOME="$home" \
   XDG_CONFIG_HOME="$home/.config" \
   ZDOTDIR="$home/.zsh" \
@@ -104,6 +111,7 @@ run_installer() {
   FAKE_NVM_CURRENT="$3" \
   FAKE_NODE_VERSION="$4" \
   FAKE_PI_INSTALLED="$5" \
+  FAKE_HANDY_INSTALLED="$handy_installed" \
   TEST_LOG="$6" \
   TEST_BIN="$BIN" \
   PATH="$BIN:/usr/bin:/bin:/usr/sbin:/sbin" \
@@ -142,6 +150,16 @@ absent "$fresh_log/npm" 'install --global'
 contains "$fresh_log/pi" 'false update --all'
 contains "$fresh_home/.config/mac-setup/zsh-plugins" 'zsh-autosuggestions'
 contains "$fresh_home/.config/mac-setup/zsh-plugins" 'fast-syntax-highlighting'
+
+# Handy is optional and installs through its Homebrew cask.
+handy_home="$TMP/handy"
+handy_log="$TMP/handy-log"
+handy_answers="$TMP/handy-answers"
+mkdir -p "$handy_home" "$handy_log"
+printf 'y\ny\ny\ny\ny\n' > "$handy_answers"
+run_installer "$handy_home" "$TMP/handy.out" system system 0 "$handy_log" "$handy_answers" 0
+contains "$handy_log/brew" 'install --cask handy'
+contains "$TMP/handy.out" 'Then: open Handy and grant microphone and accessibility permissions.'
 
 # Existing plugin checkouts become saved choices without prompting during upgrade.
 upgrade_home="$TMP/upgrade"
@@ -211,5 +229,14 @@ contains "$TMP/old.out" 'Update completed; Pi update skipped.'
 grep -Fx '20' "$old_home/.nvm/alias/default" >/dev/null
 [ ! -e "$old_log/pi" ]
 [ ! -e "$old_log/npm" ]
+
+# Dry-run uninstall includes the Handy cask.
+uninstall_home="$TMP/uninstall"
+mkdir -p "$uninstall_home"
+HOME="$uninstall_home" XDG_CONFIG_HOME="$uninstall_home/.config" \
+  BREW_BIN="$BIN/brew" FAKE_BREW_PREFIX="$FAKE_BREW_PREFIX" \
+  PATH="$BIN:/usr/bin:/bin:/usr/sbin:/sbin" \
+  "$ROOT/uninstall.sh" --dry-run > "$TMP/uninstall.out"
+contains "$TMP/uninstall.out" 'Would uninstall cask: handy'
 
 printf 'Installer smoke tests passed.\n'

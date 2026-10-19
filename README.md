@@ -64,15 +64,18 @@ configs before it links them.
   - Run `spf pl` to inspect Superfile config paths.
 - **Optional tools:**
   - [Ghostty](https://github.com/ghostty-org/ghostty) — GPU-accelerated terminal.
+  - [Handy](https://github.com/cjpais/Handy) — offline speech-to-text app.
+    Homebrew cask is community-maintained; first launch needs microphone and
+    accessibility permissions.
   - [JetBrainsMono Nerd Font](https://github.com/ryanoasis/nerd-fonts) — font
     installed with Ghostty.
   - [Herdr](https://github.com/herdrdev/herdr) — terminal multiplexer for
     persistent workspaces and coding agents.
 
-Homebrew manages core tools through `Brewfile`; installer prompts for optional
-tools and Zsh plugins, and links only selected app configs. Theme values live in
-`theme/tokyo-night.sh`; `scripts/render-configs.sh` generates app-specific
-configuration from those constants.
+Homebrew manages core tools through `Brewfile`. Installer prompts for optional
+tools (including Handy) and Zsh plugins, and links only selected app configs.
+Theme values live in `theme/tokyo-night.sh`; `scripts/render-configs.sh` generates
+app-specific configuration from those constants.
 
 ## Install
 
@@ -93,8 +96,8 @@ git clone https://github.com/marcosgilf/dotfiles ~/dotfiles
 
 Installer:
 
-- installs core tools from `Brewfile`, prompts for Ghostty and Herdr only when
-  they are not already installed, and describes each Zsh plugin before choice;
+- installs core tools from `Brewfile`, prompts for Ghostty, Herdr, and Handy only
+  when missing, and describes each Zsh plugin before choice;
   updates detect existing plugin checkouts without prompting
 - preserves an existing nvm default/active version; sets Node.js 22 as default
   when no nvm Node is selected
@@ -114,6 +117,7 @@ Keep this repository at a stable path because managed symlinks point into it.
 
 ```sh
 open -a Ghostty
+open -a Handy
 herdr
 pi
 spf
