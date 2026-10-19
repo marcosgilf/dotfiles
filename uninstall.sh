@@ -29,10 +29,10 @@ if [[ -n "$brew_bin" && ! -x "$brew_bin" ]]; then
   exit 1
 fi
 
-print 'This removes mac-setup dependencies but keeps the repository and config files:'
+print 'This removes dotfiles-managed dependencies but keeps the repository and config files:'
 print -r -- "- Homebrew formulae from $ROOT/Brewfile, Herdr, Ghostty, and JetBrainsMono Nerd Font"
 print -r -- "- all Node versions and global npm packages in $NVM_DIR"
-print -r -- "- mac-setup zsh plugin clones and Neovim plugins in $NVIM_PLUGIN_DIR"
+print -r -- "- dotfiles Zsh plugin clones and Neovim plugins in $NVIM_PLUGIN_DIR"
 print 'Pi settings, credentials, sessions, config symlinks, Homebrew, and Xcode CLT stay.'
 print 'Homebrew shared dependencies are left alone; brew autoremove will not run.'
 
