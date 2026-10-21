@@ -63,6 +63,9 @@ configs before it links them.
     colors come from shared `theme/tokyo-night.sh` variables.
   - Run `spf pl` to inspect Superfile config paths.
 - **Optional tools:**
+  - [Bun](https://bun.sh/) — JavaScript runtime, package manager, test runner,
+    and bundler. Installer offers its Homebrew formula and detects existing
+    installs in `~/.bun`.
   - [Ghostty](https://github.com/ghostty-org/ghostty) — GPU-accelerated terminal.
   - [Handy](https://github.com/cjpais/Handy) — offline speech-to-text app.
     Homebrew cask is community-maintained; first launch needs microphone and
@@ -73,7 +76,8 @@ configs before it links them.
     persistent workspaces and coding agents.
 
 Homebrew manages core tools through `Brewfile`. Installer prompts for optional
-tools (including Handy) and Zsh plugins, and links only selected app configs.
+tools (including Bun and Handy) and Zsh plugins, and links only selected app
+configs.
 Theme values live in `theme/tokyo-night.sh`; `scripts/render-configs.sh` generates
 app-specific configuration from those constants.
 
@@ -96,8 +100,8 @@ git clone https://github.com/marcosgilf/dotfiles ~/dotfiles
 
 Installer:
 
-- installs core tools from `Brewfile`, prompts for Ghostty, Herdr, and Handy only
-  when missing, and describes each Zsh plugin before choice;
+- installs core tools from `Brewfile`, prompts for Bun, Ghostty, Herdr, and Handy
+  only when missing, and describes each Zsh plugin before choice;
   updates detect existing plugin checkouts without prompting
 - preserves an existing nvm default/active version; sets Node.js 22 as default
   when no nvm Node is selected

@@ -30,7 +30,7 @@ if [[ -n "$brew_bin" && ! -x "$brew_bin" ]]; then
 fi
 
 print 'This removes dotfiles-managed dependencies but keeps the repository and config files:'
-print -r -- "- Homebrew formulae from $ROOT/Brewfile and Herdr"
+print -r -- "- Homebrew formulae from $ROOT/Brewfile and optional Bun/Herdr"
 print -r -- '- Ghostty, Handy, and JetBrainsMono Nerd Font casks'
 print -r -- "- all Node versions and global npm packages in $NVM_DIR"
 print -r -- "- dotfiles Zsh plugin clones and Neovim plugins in $NVIM_PLUGIN_DIR"
@@ -92,6 +92,7 @@ if [[ -n "$brew_bin" ]]; then
     remove_formula "$package"
   done < <(awk -F '"' '$1 == "brew " { print $2 }' "$ROOT/Brewfile")
   remove_formula herdr
+  remove_formula bun
 
   for package in ghostty handy font-jetbrains-mono-nerd-font; do
     remove_cask "$package"
