@@ -19,6 +19,9 @@ case "$1" in
   shellenv) printf 'export HOMEBREW_PREFIX="%s"\n' "$FAKE_BREW_PREFIX" ;;
   --prefix) printf '%s/opt/nvm\n' "$FAKE_BREW_PREFIX" ;;
   list)
+    if [ "$2" = --formula ] && [ "$3" = bun ] && [ "${FAKE_BUN_INSTALLED:-1}" = 0 ]; then
+      exit 1
+    fi
     if [ "$2" = --cask ] && [ "$3" = handy ] && [ "${FAKE_HANDY_INSTALLED:-1}" = 0 ]; then
       exit 1
     fi
@@ -103,6 +106,7 @@ run_installer() {
   output=$2
   answers=${7:-$TMP/plugin-answers}
   handy_installed=${8:-1}
+  bun_installed=${9:-1}
   HOME="$home" \
   XDG_CONFIG_HOME="$home/.config" \
   ZDOTDIR="$home/.zsh" \
@@ -112,6 +116,7 @@ run_installer() {
   FAKE_NODE_VERSION="$4" \
   FAKE_PI_INSTALLED="$5" \
   FAKE_HANDY_INSTALLED="$handy_installed" \
+  FAKE_BUN_INSTALLED="$bun_installed" \
   TEST_LOG="$6" \
   TEST_BIN="$BIN" \
   PATH="$BIN:/usr/bin:/bin:/usr/sbin:/sbin" \
@@ -160,6 +165,26 @@ printf 'y\ny\ny\ny\ny\n' > "$handy_answers"
 run_installer "$handy_home" "$TMP/handy.out" system system 0 "$handy_log" "$handy_answers" 0
 contains "$handy_log/brew" 'install --cask handy'
 contains "$TMP/handy.out" 'Then: open Handy and grant microphone and accessibility permissions.'
+
+# Bun is optional and recognizes the standalone installer under ~/.bun.
+bun_home="$TMP/bun"
+bun_log="$TMP/bun-log"
+bun_answers="$TMP/bun-answers"
+mkdir -p "$bun_home" "$bun_log"
+printf 'y\ny\ny\ny\ny\n' > "$bun_answers"
+run_installer "$bun_home" "$TMP/bun.out" system system 0 "$bun_log" "$bun_answers" 1 0
+contains "$bun_log/brew" 'install --formula bun'
+
+bun_existing_home="$TMP/bun-existing"
+bun_existing_log="$TMP/bun-existing-log"
+mkdir -p "$bun_existing_home/.bun/bin" "$bun_existing_log"
+printf '#!/bin/sh\nexit 0\n' > "$bun_existing_home/.bun/bin/bun"
+chmod +x "$bun_existing_home/.bun/bin/bun"
+run_installer "$bun_existing_home" "$TMP/bun-existing.out" system system 0 "$bun_existing_log" "$TMP/plugin-answers" 1 0
+contains "$TMP/bun-existing.out" 'Using Bun'
+if [ -f "$bun_existing_log/brew" ]; then
+  absent "$bun_existing_log/brew" 'install --formula bun'
+fi
 
 # Existing plugin checkouts become saved choices without prompting during upgrade.
 upgrade_home="$TMP/upgrade"
@@ -216,6 +241,14 @@ XDG_CONFIG_HOME="$runtime_config" ZDOTDIR="$runtime_zsh" TEST_PLUGIN_LOG="$plugi
   /bin/zsh -c 'source "$ROOT/zsh/plugins.zsh"'
 [ "$(cat "$plugin_log")" = 'zsh-vi-mode' ]
 
+# Bun's default install path is added to Zsh PATH.
+bun_path_home="$TMP/bun-path"
+mkdir -p "$bun_path_home/.bun/bin"
+printf '#!/bin/sh\nexit 0\n' > "$bun_path_home/.bun/bin/bun"
+chmod +x "$bun_path_home/.bun/bin/bun"
+HOME="$bun_path_home" XDG_CONFIG_HOME="$bun_path_home/.config" ZDOTDIR="$ROOT/zsh" \
+  PATH=/usr/bin:/bin /bin/zsh -c '[[ "$(command -v bun)" == "$HOME/.bun/bin/bun" ]]'
+
 # Older active Node warns, skips Pi, and does not change the existing default.
 old_home="$TMP/old-node"
 old_log="$TMP/old-log"
@@ -238,5 +271,6 @@ HOME="$uninstall_home" XDG_CONFIG_HOME="$uninstall_home/.config" \
   PATH="$BIN:/usr/bin:/bin:/usr/sbin:/sbin" \
   "$ROOT/uninstall.sh" --dry-run > "$TMP/uninstall.out"
 contains "$TMP/uninstall.out" 'Would uninstall cask: handy'
+contains "$TMP/uninstall.out" 'Would uninstall formula: bun'
 
 printf 'Installer smoke tests passed.\n'

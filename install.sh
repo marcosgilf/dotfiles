@@ -127,15 +127,22 @@ install_if_missing() {
 install_ghostty=0
 install_herdr=0
 install_handy=0
+install_bun=0
 ask_optional --cask ghostty 'Install Ghostty terminal?' && install_ghostty=1
 ask_optional --formula herdr 'Install Herdr multiplexer?' && install_herdr=1
 ask_optional --cask handy 'Install Handy speech-to-text?' && install_handy=1
+if [[ -x "$HOME/.bun/bin/bun" ]] || command -v bun >/dev/null 2>&1; then
+  print 'Using Bun'
+else
+  ask_optional --formula bun 'Install Bun?' && install_bun=1
+fi
 select_zsh_plugins
 
 (( install_ghostty )) && install_if_missing --cask font-jetbrains-mono-nerd-font
 (( install_ghostty )) && install_if_missing --cask ghostty
 (( install_herdr )) && install_if_missing --formula herdr
 (( install_handy )) && install_if_missing --cask handy
+(( install_bun )) && install_if_missing --formula bun
 trace 'Optional dependencies updated'
 
 HOMEBREW_COLOR=1 brew bundle --file="$ROOT/Brewfile" 2>&1 | awk '

@@ -29,6 +29,13 @@ export STARSHIP_CONFIG="$ZDOTDIR/starship.toml"
 # Personal binaries/scripts
 export PATH="$HOME/.local/bin:$PATH"
 
+# Bun
+export BUN_INSTALL="${BUN_INSTALL:-$HOME/.bun}"
+case ":$PATH:" in
+  *":$BUN_INSTALL/bin:"*) ;;
+  *) export PATH="$BUN_INSTALL/bin:$PATH" ;;
+esac
+
 # Cargo
 [[ -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 

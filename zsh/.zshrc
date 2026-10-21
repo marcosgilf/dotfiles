@@ -87,3 +87,5 @@ source "$ZDOTDIR/plugins.zsh"
 # Prompt/theme
 source "$ZDOTDIR/prompt.zsh"
 
+# Bun completions
+[[ -s "$BUN_INSTALL/_bun" ]] && source "$BUN_INSTALL/_bun"
