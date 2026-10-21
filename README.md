@@ -9,77 +9,62 @@ configs before it links them.
 
 ## Included tools
 
-- **[zsh](https://github.com/zsh-users/zsh)** — interactive shell configured with:
-  - [Starship](https://github.com/starship/starship) — customizable prompt.
-  - [fzf](https://github.com/junegunn/fzf) — fuzzy finder for files and history.
-  - [zoxide](https://github.com/ajeetdsouza/zoxide) — frecency-based directory
-    navigation.
-  - [eza](https://github.com/eza-community/eza) — modern `ls` replacement.
-  - [bat](https://github.com/sharkdp/bat) — `cat` replacement with syntax
-    highlighting.
-  - [fd](https://github.com/sharkdp/fd) — fast, user-friendly file finder.
-  - [ripgrep](https://github.com/BurntSushi/ripgrep) — fast recursive text search.
-  - [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) —
-    suggests commands from history as you type.
-  - [History substring search](https://github.com/zsh-users/zsh-history-substring-search) —
-    searches history using the current command line.
-  - [zsh-vi-mode](https://github.com/jeffreytse/zsh-vi-mode) — vi-style editing
-    modes and keybindings.
-  - [fast-syntax-highlighting](https://github.com/zdharma-continuum/fast-syntax-highlighting) —
-    highlights shell syntax while editing commands.
+<!-- BEGIN GENERATED PROGRAM CATALOG -->
+### Core tools
+- [bat](https://github.com/sharkdp/bat) — Cat replacement with syntax highlighting.
+- [eza](https://github.com/eza-community/eza) — Modern replacement for ls.
+- [fd](https://github.com/sharkdp/fd) — Fast, user-friendly file finder.
+- [fzf](https://github.com/junegunn/fzf) — Fuzzy finder for files and command history.
+- [Neovim](https://neovim.io/) — Extensible text editor.
+- [nvm](https://github.com/nvm-sh/nvm) — Node.js version manager.
+- [ripgrep](https://github.com/BurntSushi/ripgrep) — Fast recursive text search.
+- [Starship](https://starship.rs/) — Cross-shell prompt.
+- [Superfile](https://superfile.dev/) — Terminal file manager with custom hotkeys and Tokyo Night theme.
+- [zoxide](https://github.com/ajeetdsouza/zoxide) — Frecency-based directory navigation.
+- [Zsh](https://www.zsh.org/) — Interactive shell.
 
-  Installer shows descriptions and asks which plugins to enable on first
-  install. Updates detect existing plugin checkouts and preserve choices without
-  prompting. Selected plugins clone on first shell startup; choices remain at
-  `$XDG_CONFIG_HOME/mac-setup/zsh-plugins` to preserve existing installs.
-- **[Neovim](https://github.com/neovim/neovim)** — editor configured with:
-  - [LazyVim](https://github.com/LazyVim/LazyVim) — opinionated setup and plugin
-    collection.
-  - [lazy.nvim](https://github.com/folke/lazy.nvim) — plugin manager used by
-    LazyVim.
-  - [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) — LSP client
-    configurations.
-  - [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) —
-    syntax parsing and highlighting.
-  - [blink.cmp](https://github.com/Saghen/blink.cmp) — completion engine.
-  - [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) — Git change
-    indicators in the sign column.
-  - [Tokyo Night](https://github.com/folke/tokyonight.nvim) — Neovim color
-    scheme.
-- **Node.js and nvm** — runtime and version manager:
-  - [Node.js](https://github.com/nodejs/node) — JavaScript runtime; fresh setups
-    default to v22, and Pi requires v22.19+.
-  - [nvm](https://github.com/nvm-sh/nvm) — manages Node versions; existing
-    selections are preserved.
-- **[Pi](https://github.com/earendil-works/pi)** — terminal coding agent,
-  installed with its managed installer.
-- **[Superfile](https://github.com/yorukot/superfile)** — terminal file manager,
-  launched with `spf`:
-  - [Vim-like hotkeys](https://superfile.dev/configure/custom-hotkeys/) — uses
-    `h/j/k/l`, `/` search, and familiar copy/paste keys.
-  - [Zoxide plugin](https://superfile.dev/list/plugin-list/) — enabled for
-    frequent-directory navigation with `z`.
-  - [Custom theme](https://superfile.dev/configure/custom-theme/) — Tokyo Night
-    colors come from shared `theme/tokyo-night.sh` variables.
-  - Run `spf pl` to inspect Superfile config paths.
-- **Optional tools:**
-  - [Bun](https://bun.sh/) — JavaScript runtime, package manager, test runner,
-    and bundler. Installer offers its Homebrew formula and detects existing
-    installs in `~/.bun`.
-  - [Ghostty](https://github.com/ghostty-org/ghostty) — GPU-accelerated terminal.
-  - [Handy](https://github.com/cjpais/Handy) — offline speech-to-text app.
-    Homebrew cask is community-maintained; first launch needs microphone and
-    accessibility permissions.
-  - [JetBrainsMono Nerd Font](https://github.com/ryanoasis/nerd-fonts) — font
-    installed with Ghostty.
-  - [Herdr](https://github.com/herdrdev/herdr) — terminal multiplexer for
-    persistent workspaces and coding agents.
+### Optional tools
+- [Bun](https://bun.sh/) — JavaScript runtime, package manager, test runner, and bundler.
+- [Herdr](https://github.com/herdrdev/herdr) — Terminal multiplexer for persistent workspaces and coding agents.
+- [Ghostty](https://ghostty.org/) — GPU-accelerated terminal.
+- [Handy](https://github.com/cjpais/Handy) — Offline speech-to-text app; first launch needs microphone and accessibility permissions.
 
-Homebrew manages core tools through `Brewfile`. Installer prompts for optional
-tools (including Bun and Handy) and Zsh plugins, and links only selected app
-configs.
-Theme values live in `theme/tokyo-night.sh`; `scripts/render-configs.sh` generates
-app-specific configuration from those constants.
+### Installed with Ghostty
+- [JetBrainsMono Nerd Font](https://github.com/ryanoasis/nerd-fonts) — Nerd Font installed with Ghostty.
+
+### Zsh plugins
+- [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) — Suggests commands from history as you type.
+- [zsh-history-substring-search](https://github.com/zsh-users/zsh-history-substring-search) — Searches history by typed text with Up/Down.
+- [zsh-vi-mode](https://github.com/jeffreytse/zsh-vi-mode) — Adds Vim-style command-line editing modes.
+- [fast-syntax-highlighting](https://github.com/zdharma-continuum/fast-syntax-highlighting) — Highlights shell syntax while editing commands.
+
+### Runtime-managed tools
+- [Node.js](https://nodejs.org/) — JavaScript runtime; fresh installs use version 22, and Pi needs version 22.19 or newer.
+- [Pi](https://github.com/earendil-works/pi) — Terminal coding agent installed with its managed installer.
+
+### Neovim plugins
+- [LazyVim](https://www.lazyvim.org/) — Opinionated Neovim setup and plugin collection.
+- [lazy.nvim](https://github.com/folke/lazy.nvim) — Plugin manager used by LazyVim.
+- [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) — Neovim language server configurations.
+- [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) — Treesitter parsing and highlighting for Neovim.
+- [blink.cmp](https://github.com/Saghen/blink.cmp) — Completion engine for Neovim.
+- [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) — Git change indicators for Neovim.
+
+### Superfile integrations
+- [Vim-like Superfile hotkeys](https://superfile.dev/configure/custom-hotkeys/) — Uses h/j/k/l, / search, and familiar copy/paste keys.
+- [Superfile Zoxide plugin](https://superfile.dev/list/plugin-list/) — Enables frequent-directory navigation with z.
+- [Superfile Tokyo Night theme](https://superfile.dev/configure/custom-theme/) — Uses colors from the shared theme configuration.
+
+### Theme
+- [Tokyo Night](https://github.com/folke/tokyonight.nvim) — Shared dark palette used by Ghostty, Herdr, Neovim, Superfile, and Starship.
+<!-- END GENERATED PROGRAM CATALOG -->
+
+Program metadata lives in `config/programs.zsh`. Add a supported Homebrew
+formula or cask there; installer, uninstaller, `Brewfile`, and this inventory
+use that data. Zsh plugins also use the same records for prompts and loading.
+Theme colors and metadata live in `theme/tokyo-night.sh`. Run
+`scripts/render-configs.sh` to regenerate `Brewfile`, this inventory, and app
+configuration files.
 
 ## Install
 
@@ -100,9 +85,9 @@ git clone https://github.com/marcosgilf/dotfiles ~/dotfiles
 
 Installer:
 
-- installs core tools from `Brewfile`, prompts for Bun, Ghostty, Herdr, and Handy
-  only when missing, and describes each Zsh plugin before choice;
-  updates detect existing plugin checkouts without prompting
+- installs configured core programs; offers configured optional programs and
+  Zsh plugins; preserves saved plugin choices and detects existing plugin
+  checkouts on updates
 - preserves an existing nvm default/active version; sets Node.js 22 as default
   when no nvm Node is selected
 - installs or migrates Pi with its managed installer when needed, then runs

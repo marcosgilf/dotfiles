@@ -25,6 +25,12 @@ case "$1" in
     if [ "$2" = --cask ] && [ "$3" = handy ] && [ "${FAKE_HANDY_INSTALLED:-1}" = 0 ]; then
       exit 1
     fi
+    if [ "$2" = --cask ] && [ "$3" = ghostty ] && [ "${FAKE_GHOSTTY_INSTALLED:-1}" = 0 ]; then
+      exit 1
+    fi
+    if [ "$2" = --cask ] && [ "$3" = font-jetbrains-mono-nerd-font ] && [ "${FAKE_FONT_INSTALLED:-1}" = 0 ]; then
+      exit 1
+    fi
     exit 0
     ;;
   install) printf '%s\n' "$*" >> "$TEST_LOG/brew" ;;
@@ -107,6 +113,8 @@ run_installer() {
   answers=${7:-$TMP/plugin-answers}
   handy_installed=${8:-1}
   bun_installed=${9:-1}
+  ghostty_installed=${10:-1}
+  font_installed=${11:-1}
   HOME="$home" \
   XDG_CONFIG_HOME="$home/.config" \
   ZDOTDIR="$home/.zsh" \
@@ -117,6 +125,8 @@ run_installer() {
   FAKE_PI_INSTALLED="$5" \
   FAKE_HANDY_INSTALLED="$handy_installed" \
   FAKE_BUN_INSTALLED="$bun_installed" \
+  FAKE_GHOSTTY_INSTALLED="$ghostty_installed" \
+  FAKE_FONT_INSTALLED="$font_installed" \
   TEST_LOG="$6" \
   TEST_BIN="$BIN" \
   PATH="$BIN:/usr/bin:/bin:/usr/sbin:/sbin" \
@@ -135,6 +145,11 @@ mkdir -p "$fresh_home" "$fresh_log"
 run_installer "$fresh_home" "$TMP/fresh.out" system system 0 "$fresh_log"
 contains "$TMP/fresh.out" 'Optional dependencies updated'
 contains "$TMP/fresh.out" 'Brewfile dependencies updated'
+contains "$ROOT/Brewfile" '# Generated from config/programs.zsh. Do not edit.'
+contains "$ROOT/Brewfile" 'brew "nvm"'
+absent "$ROOT/Brewfile" 'brew "bun"'
+contains "$ROOT/README.md" '[Bun](https://bun.sh/)'
+contains "$ROOT/README.md" '[Tokyo Night](https://github.com/folke/tokyonight.nvim)'
 contains "$TMP/fresh.out" 'Warning: retained stderr warning'
 absent "$TMP/fresh.out" '`brew bundle` complete!'
 contains "$TMP/fresh.out" 'Install complete.'
@@ -166,6 +181,15 @@ run_installer "$handy_home" "$TMP/handy.out" system system 0 "$handy_log" "$hand
 contains "$handy_log/brew" 'install --cask handy'
 contains "$TMP/handy.out" 'Then: open Handy and grant microphone and accessibility permissions.'
 
+ghostty_home="$TMP/ghostty"
+ghostty_log="$TMP/ghostty-log"
+ghostty_answers="$TMP/ghostty-answers"
+mkdir -p "$ghostty_home" "$ghostty_log"
+printf 'y\ny\ny\ny\ny\n' > "$ghostty_answers"
+run_installer "$ghostty_home" "$TMP/ghostty.out" system system 0 "$ghostty_log" "$ghostty_answers" 1 1 0 0
+contains "$ghostty_log/brew" 'install --cask ghostty'
+contains "$ghostty_log/brew" 'install --cask font-jetbrains-mono-nerd-font'
+
 # Bun is optional and recognizes the standalone installer under ~/.bun.
 bun_home="$TMP/bun"
 bun_log="$TMP/bun-log"
@@ -174,6 +198,8 @@ mkdir -p "$bun_home" "$bun_log"
 printf 'y\ny\ny\ny\ny\n' > "$bun_answers"
 run_installer "$bun_home" "$TMP/bun.out" system system 0 "$bun_log" "$bun_answers" 1 0
 contains "$bun_log/brew" 'install --formula bun'
+contains "$TMP/bun.out" 'Bun — JavaScript runtime, package manager, test runner, and bundler.'
+contains "$TMP/bun.out" 'Docs: https://bun.sh/'
 
 bun_existing_home="$TMP/bun-existing"
 bun_existing_log="$TMP/bun-existing-log"
@@ -237,7 +263,7 @@ for plugin in zsh-autosuggestions zsh-history-substring-search zsh-vi-mode fast-
   mkdir -p "$runtime_zsh/plugins/$plugin"
   printf 'print -r -- %s >> "$TEST_PLUGIN_LOG"\n' "$plugin" > "$runtime_zsh/plugins/$plugin/$plugin.plugin.zsh"
 done
-XDG_CONFIG_HOME="$runtime_config" ZDOTDIR="$runtime_zsh" TEST_PLUGIN_LOG="$plugin_log" ROOT="$ROOT" \
+XDG_CONFIG_HOME="$runtime_config" ZDOTDIR="$runtime_zsh" TEST_PLUGIN_LOG="$plugin_log" ROOT="$ROOT" DOTFILES_ROOT="$ROOT" \
   /bin/zsh -c 'source "$ROOT/zsh/plugins.zsh"'
 [ "$(cat "$plugin_log")" = 'zsh-vi-mode' ]
 
@@ -271,6 +297,7 @@ HOME="$uninstall_home" XDG_CONFIG_HOME="$uninstall_home/.config" \
   PATH="$BIN:/usr/bin:/bin:/usr/sbin:/sbin" \
   "$ROOT/uninstall.sh" --dry-run > "$TMP/uninstall.out"
 contains "$TMP/uninstall.out" 'Would uninstall cask: handy'
+contains "$TMP/uninstall.out" 'Would uninstall cask: font-jetbrains-mono-nerd-font'
 contains "$TMP/uninstall.out" 'Would uninstall formula: bun'
 
 printf 'Installer smoke tests passed.\n'

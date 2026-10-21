@@ -1,4 +1,5 @@
 .DS_Store
+.zsh_history
 *.swp
 *.bak.*
 *.local

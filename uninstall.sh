@@ -2,6 +2,7 @@
 set -euo pipefail
 
 readonly ROOT=${0:A:h}
+source "$ROOT/config/programs.zsh"
 readonly CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 readonly ZDOTDIR=${ZDOTDIR:-$CONFIG_HOME/zsh}
 readonly NVM_DIR="$HOME/.nvm"
@@ -30,8 +31,7 @@ if [[ -n "$brew_bin" && ! -x "$brew_bin" ]]; then
 fi
 
 print 'This removes dotfiles-managed dependencies but keeps the repository and config files:'
-print -r -- "- Homebrew formulae from $ROOT/Brewfile and optional Bun/Herdr"
-print -r -- '- Ghostty, Handy, and JetBrainsMono Nerd Font casks'
+print -r -- '- Homebrew formulae and casks configured in config/programs.zsh'
 print -r -- "- all Node versions and global npm packages in $NVM_DIR"
 print -r -- "- dotfiles Zsh plugin clones and Neovim plugins in $NVIM_PLUGIN_DIR"
 print 'Pi settings, credentials, sessions, config symlinks, Homebrew, and Xcode CLT stay.'
@@ -88,14 +88,12 @@ remove_cask() {
 }
 
 if [[ -n "$brew_bin" ]]; then
-  while IFS= read -r package; do
-    remove_formula "$package"
-  done < <(awk -F '"' '$1 == "brew " { print $2 }' "$ROOT/Brewfile")
-  remove_formula herdr
-  remove_formula bun
-
-  for package in ghostty handy font-jetbrains-mono-nerd-font; do
-    remove_cask "$package"
+  for record in "${PROGRAMS[@]}"; do
+    read_program "$record"
+    case "$PROGRAM_TYPE" in
+      brew_formula) remove_formula "$PROGRAM_PACKAGE" ;;
+      brew_cask) remove_cask "$PROGRAM_PACKAGE" ;;
+    esac
   done
 else
   print 'Homebrew not found; skipping formula and cask removal.'
@@ -114,7 +112,10 @@ elif [[ -d "$NVM_DIR" ]]; then
   fi
 fi
 
-for plugin in zsh-autosuggestions zsh-history-substring-search zsh-vi-mode fast-syntax-highlighting; do
+for record in "${PROGRAMS[@]}"; do
+  read_program "$record"
+  [[ "$PROGRAM_TYPE" == zsh_plugin ]] || continue
+  plugin=${PROGRAM_PACKAGE##*/}
   plugin_path="$ZDOTDIR/plugins/$plugin"
   if [[ -e "$plugin_path" || -L "$plugin_path" ]]; then
     if (( dry_run )); then
