@@ -1,3 +1,4 @@
+# Generated from config/programs.zsh. Do not edit.
 brew "bat"
 brew "eza"
 brew "fd"

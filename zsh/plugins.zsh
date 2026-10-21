@@ -3,15 +3,18 @@
 # =========================================================
 
 ZSH_CONFIG_DIR="${ZDOTDIR:-$HOME/.config/zsh}"
+DOTFILES_ROOT="${DOTFILES_ROOT:-${${ZSH_CONFIG_DIR:A}:h}}"
+source "$DOTFILES_ROOT/config/programs.zsh"
 ZPLUGINDIR="${ZSH_CONFIG_DIR}/plugins"
 PLUGIN_SELECTION="${XDG_CONFIG_HOME:-$HOME/.config}/mac-setup/zsh-plugins"
 typeset -a _MAC_SETUP_ENABLED_ZSH_PLUGINS
-_MAC_SETUP_ENABLED_ZSH_PLUGINS=(
-  zsh-autosuggestions
-  zsh-history-substring-search
-  zsh-vi-mode
-  fast-syntax-highlighting
-)
+_MAC_SETUP_ENABLED_ZSH_PLUGINS=()
+for record in "${PROGRAMS[@]}"; do
+  read_program "$record"
+  if [[ "$PROGRAM_TYPE" == zsh_plugin ]]; then
+    _MAC_SETUP_ENABLED_ZSH_PLUGINS+=("${PROGRAM_PACKAGE##*/}")
+  fi
+done
 if [[ -r "$PLUGIN_SELECTION" ]]; then
   _MAC_SETUP_ENABLED_ZSH_PLUGINS=()
   typeset selected_plugin
@@ -41,7 +44,8 @@ zplugin-update() {
   done
 }
 
-_zplugin_load zsh-users zsh-autosuggestions
-_zplugin_load zsh-users zsh-history-substring-search
-_zplugin_load jeffreytse zsh-vi-mode
-_zplugin_load zdharma-continuum fast-syntax-highlighting
+for record in "${PROGRAMS[@]}"; do
+  read_program "$record"
+  [[ "$PROGRAM_TYPE" == zsh_plugin ]] || continue
+  _zplugin_load "${PROGRAM_PACKAGE%/*}" "${PROGRAM_PACKAGE##*/}"
+done

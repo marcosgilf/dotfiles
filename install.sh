@@ -2,6 +2,7 @@
 set -euo pipefail
 
 readonly ROOT=${0:A:h}
+source "$ROOT/config/programs.zsh"
 readonly CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 readonly ZSH_DIR="$CONFIG_HOME/zsh"
 readonly NVIM_DIR="$CONFIG_HOME/nvim"
@@ -69,6 +70,8 @@ else
   fi
 fi
 
+"$ROOT/scripts/render-configs.sh"
+
 trace() {
   print -P "%F{green}✔︎%f $1"
 }
@@ -79,18 +82,43 @@ ask() {
   [[ -z "$reply" || "$reply" == [Yy]* ]]
 }
 
-ask_optional() {
-  local type=$1 package=$2 prompt=$3
-  if brew list "$type" "$package" >/dev/null 2>&1; then
-    print "Using $package"
+brew_flag() {
+  case "$1" in
+    brew_formula) print -r -- --formula ;;
+    brew_cask) print -r -- --cask ;;
+    *) print -u2 -- "Unsupported Homebrew dependency type: $1"; return 2 ;;
+  esac
+}
+
+dependency_installed() {
+  local type=$1 package=$2 detect_path=$3 flag
+  [[ "$detect_path" != '-' && -x "$HOME/$detect_path" ]] && return 0
+  flag=$(brew_flag "$type")
+  brew list "$flag" "$package" >/dev/null 2>&1
+}
+
+install_if_missing() {
+  local type=$1 package=$2 detect_path=$3 flag
+  dependency_installed "$type" "$package" "$detect_path" && return 0
+  flag=$(brew_flag "$type")
+  brew install "$flag" "$package"
+}
+
+ask_optional_program() {
+  local type=$1 package=$2 name=$3 description=$4 docs_url=$5 detect_path=$6
+  if dependency_installed "$type" "$package" "$detect_path"; then
+    print "Using $name"
     return 0
   fi
-  ask "$prompt"
+  print "$name — $description"
+  print "Docs: $docs_url"
+  ask "Install $name?"
 }
 
 ask_zsh_plugin() {
-  local name=$1 description=$2
+  local name=$1 description=$2 docs_url=$3
   print "  $name — $description"
+  print "  Docs: $docs_url"
   if ask "Enable $name?"; then
     selected_zsh_plugins+=("$name")
   fi
@@ -103,8 +131,11 @@ select_zsh_plugins() {
     return 0
   fi
 
-  local plugin
-  for plugin in zsh-autosuggestions zsh-history-substring-search zsh-vi-mode fast-syntax-highlighting; do
+  local record plugin
+  for record in "${PROGRAMS[@]}"; do
+    read_program "$record"
+    [[ "$PROGRAM_TYPE" == zsh_plugin ]] || continue
+    plugin=${PROGRAM_PACKAGE##*/}
     [[ -f "$ZSH_DIR/plugins/$plugin/$plugin.plugin.zsh" ]] && selected_zsh_plugins+=("$plugin")
   done
   if (( ${#selected_zsh_plugins[@]} )); then
@@ -113,36 +144,41 @@ select_zsh_plugins() {
   fi
 
   print 'Choose Zsh plugins (Enter accepts each default: yes):'
-  ask_zsh_plugin zsh-autosuggestions 'Suggests commands from history as you type.'
-  ask_zsh_plugin zsh-history-substring-search 'Searches history by typed text with Up/Down.'
-  ask_zsh_plugin zsh-vi-mode 'Adds Vim-style command-line editing modes.'
-  ask_zsh_plugin fast-syntax-highlighting 'Highlights shell commands and syntax as you type.'
+  for record in "${PROGRAMS[@]}"; do
+    read_program "$record"
+    [[ "$PROGRAM_TYPE" == zsh_plugin ]] || continue
+    ask_zsh_plugin "$PROGRAM_NAME" "$PROGRAM_DESCRIPTION" "$PROGRAM_DOCS_URL"
+  done
 }
 
-install_if_missing() {
-  local type=$1 package=$2
-  brew list "$type" "$package" >/dev/null 2>&1 || brew install "$type" "$package"
+typeset -gA selected_programs
+selected_programs=()
+program_selected() {
+  [[ "${selected_programs[$1]:-0}" == 1 ]]
 }
-
-install_ghostty=0
-install_herdr=0
-install_handy=0
-install_bun=0
-ask_optional --cask ghostty 'Install Ghostty terminal?' && install_ghostty=1
-ask_optional --formula herdr 'Install Herdr multiplexer?' && install_herdr=1
-ask_optional --cask handy 'Install Handy speech-to-text?' && install_handy=1
-if [[ -x "$HOME/.bun/bin/bun" ]] || command -v bun >/dev/null 2>&1; then
-  print 'Using Bun'
-else
-  ask_optional --formula bun 'Install Bun?' && install_bun=1
-fi
+for record in "${PROGRAMS[@]}"; do
+  read_program "$record"
+  [[ "$PROGRAM_SCOPE" == optional && ( "$PROGRAM_TYPE" == brew_formula || "$PROGRAM_TYPE" == brew_cask ) ]] || continue
+  if ask_optional_program "$PROGRAM_TYPE" "$PROGRAM_PACKAGE" "$PROGRAM_NAME" \
+    "$PROGRAM_DESCRIPTION" "$PROGRAM_DOCS_URL" "$PROGRAM_DETECT_PATH"; then
+    selected_programs[$PROGRAM_PACKAGE]=1
+  fi
+done
 select_zsh_plugins
 
-(( install_ghostty )) && install_if_missing --cask font-jetbrains-mono-nerd-font
-(( install_ghostty )) && install_if_missing --cask ghostty
-(( install_herdr )) && install_if_missing --formula herdr
-(( install_handy )) && install_if_missing --cask handy
-(( install_bun )) && install_if_missing --formula bun
+for record in "${PROGRAMS[@]}"; do
+  read_program "$record"
+  [[ "$PROGRAM_SCOPE" == optional && ( "$PROGRAM_TYPE" == brew_formula || "$PROGRAM_TYPE" == brew_cask ) ]] || continue
+  [[ "${selected_programs[$PROGRAM_PACKAGE]:-0}" == 1 ]] || continue
+  install_if_missing "$PROGRAM_TYPE" "$PROGRAM_PACKAGE" "$PROGRAM_DETECT_PATH"
+done
+if [[ "${selected_programs[ghostty]:-0}" == 1 ]]; then
+  for record in "${PROGRAMS[@]}"; do
+    read_program "$record"
+    [[ "$PROGRAM_SCOPE" == ghostty ]] || continue
+    install_if_missing "$PROGRAM_TYPE" "$PROGRAM_PACKAGE" "$PROGRAM_DETECT_PATH"
+  done
+fi
 trace 'Optional dependencies updated'
 
 HOMEBREW_COLOR=1 brew bundle --file="$ROOT/Brewfile" 2>&1 | awk '
@@ -154,6 +190,15 @@ HOMEBREW_COLOR=1 brew bundle --file="$ROOT/Brewfile" 2>&1 | awk '
 '
 trace 'Brewfile dependencies updated'
 
+node_version=''
+for record in "${PROGRAMS[@]}"; do
+  read_program "$record"
+  [[ "$PROGRAM_TYPE" == nvm_runtime ]] || continue
+  node_version=$PROGRAM_PACKAGE
+  break
+done
+[[ -n "$node_version" ]] || { print -u2 'No nvm runtime configured in config/programs.zsh'; exit 1; }
+
 mkdir -p "$HOME/.nvm"
 export NVM_DIR="$HOME/.nvm"
 set +u # nvm.sh reads optional unset variables.
@@ -163,16 +208,27 @@ if [[ "$current_node" == system || "$current_node" == none ]]; then
   if [[ -s "$NVM_DIR/alias/default" ]]; then
     nvm use default
   else
-    nvm install 22
-    nvm alias default 22
+    nvm install "$node_version"
+    nvm alias default "$node_version"
   fi
 else
   print "Using existing Node $current_node; leaving NVM default unchanged"
 fi
 current_node=$(nvm current)
+pi_min_node_version=''
+for record in "${PROGRAMS[@]}"; do
+  read_program "$record"
+  [[ "$PROGRAM_TYPE" == managed_app && "$PROGRAM_PACKAGE" == pi ]] || continue
+  pi_min_node_version=$PROGRAM_SETTING
+  break
+done
+[[ -n "$pi_min_node_version" && "$pi_min_node_version" != '-' ]] || {
+  print -u2 'Pi minimum Node.js version missing from config/programs.zsh'
+  exit 1
+}
 pi_supported=1
-if ! node -e 'const [major, minor] = process.versions.node.split(".").map(Number); process.exit(major > 22 || (major === 22 && minor >= 19) ? 0 : 1)'; then
-  print -u2 "Warning: Pi requires Node.js 22.19 or newer; active Node is $current_node. Pi install/update skipped. Run 'nvm install 22 && nvm use 22', then rerun ./install.sh; NVM default stays unchanged."
+if ! PI_MIN_NODE_VERSION="$pi_min_node_version" node -e 'const [requiredMajor, requiredMinor] = process.env.PI_MIN_NODE_VERSION.split(".").map(Number); const [major, minor] = process.versions.node.split(".").map(Number); process.exit(major > requiredMajor || (major === requiredMajor && minor >= requiredMinor) ? 0 : 1)'; then
+  print -u2 "Warning: Pi requires Node.js $pi_min_node_version or newer; active Node is $current_node. Pi install/update skipped. Run 'nvm install $node_version && nvm use $node_version', then rerun ./install.sh; NVM default stays unchanged."
   pi_supported=0
 fi
 if (( pi_supported )); then
@@ -201,7 +257,6 @@ if (( pi_supported )); then
 fi
 
 preserve_local_zsh
-"$ROOT/scripts/render-configs.sh"
 
 link_config "$ROOT/zsh" "$ZSH_DIR"
 if [[ ! -f "$PLUGIN_SELECTION" ]]; then
@@ -212,8 +267,8 @@ if [[ ! -f "$PLUGIN_SELECTION" ]]; then
   done
   print "Saved Zsh plugin choices: $PLUGIN_SELECTION"
 fi
-(( install_ghostty )) && link_config "$ROOT/ghostty/config.ghostty" "$HOME/Library/Application Support/com.mitchellh.ghostty/config.ghostty"
-(( install_herdr )) && link_config "$ROOT/herdr/config.toml" "$CONFIG_HOME/herdr/config.toml"
+program_selected ghostty && link_config "$ROOT/ghostty/config.ghostty" "$HOME/Library/Application Support/com.mitchellh.ghostty/config.ghostty"
+program_selected herdr && link_config "$ROOT/herdr/config.toml" "$CONFIG_HOME/herdr/config.toml"
 link_config "$ROOT/nvim" "$NVIM_DIR"
 link_config "$ROOT/superfile/config.toml" "$CONFIG_HOME/superfile/config.toml"
 link_config "$ROOT/superfile/hotkeys.toml" "$CONFIG_HOME/superfile/hotkeys.toml"
@@ -230,17 +285,17 @@ if (( is_update )); then
 else
   trace 'Install complete.'
   if (( pi_supported == 0 )); then
-    print 'Next: run nvm install 22 && nvm use 22, then rerun ./install.sh to install Pi.'
-  elif (( install_ghostty && install_herdr )); then
+    print "Next: run nvm install $node_version && nvm use $node_version, then rerun ./install.sh to install Pi."
+  elif program_selected ghostty && program_selected herdr; then
     print 'Next: open Ghostty, run herdr, then start a Pi session in Herdr.'
-  elif (( install_ghostty )); then
+  elif program_selected ghostty; then
     print 'Next: open Ghostty, then start a Pi session with pi.'
-  elif (( install_herdr )); then
+  elif program_selected herdr; then
     print 'Next: run herdr, then start a Pi session in Herdr.'
   else
     print 'Next: start a Pi session with pi in your terminal.'
   fi
-  if (( install_handy )); then
+  if program_selected handy; then
     print 'Then: open Handy and grant microphone and accessibility permissions.'
   fi
 fi
