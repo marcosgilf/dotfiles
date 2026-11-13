@@ -1,8 +1,6 @@
-# nvim
+# Neovim
 
-Personal LazyVim configuration with the Tokyo Night theme.
-
-Place this directory at Neovim's configuration path or select it with
-`NVIM_APPNAME`.
-
-The plugin lockfile is tracked for repeatable plugin versions.
+Minimal Neovim config. `init.lua` is rendered from `init.lua.tmpl` with colors
+from `../theme/tokyo-night.sh`. It uses Neovim's built-in defaults and installs no
+plugins. Add settings and plugins in `init.lua.tmpl`, then rerun
+`scripts/render-configs.sh`.

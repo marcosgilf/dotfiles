@@ -28,6 +28,13 @@ link_config() {
   print "linked: $target"
 }
 
+remove_legacy_link() {
+  local source=$1 target=$2
+  [[ -L "$target" && "$(readlink "$target")" == "$source" ]] || return 0
+  rm "$target"
+  print "removed: $target"
+}
+
 preserve_local_zsh() {
   local source="$ZSH_DIR" file relative
   [[ -d "$source" && ! -L "$source" ]] || return 0
@@ -270,9 +277,10 @@ fi
 program_selected ghostty && link_config "$ROOT/ghostty/config.ghostty" "$HOME/Library/Application Support/com.mitchellh.ghostty/config.ghostty"
 program_selected herdr && link_config "$ROOT/herdr/config.toml" "$CONFIG_HOME/herdr/config.toml"
 link_config "$ROOT/nvim" "$NVIM_DIR"
-link_config "$ROOT/superfile/config.toml" "$CONFIG_HOME/superfile/config.toml"
-link_config "$ROOT/superfile/hotkeys.toml" "$CONFIG_HOME/superfile/hotkeys.toml"
-link_config "$ROOT/superfile/themes/tokyo-night.toml" \
+# Temporary migration; remove after all managed installs have run updated installer.
+remove_legacy_link "$ROOT/superfile/config.toml" "$CONFIG_HOME/superfile/config.toml"
+remove_legacy_link "$ROOT/superfile/hotkeys.toml" "$CONFIG_HOME/superfile/hotkeys.toml"
+remove_legacy_link "$ROOT/superfile/themes/tokyo-night.toml" \
   "$CONFIG_HOME/superfile/theme/tokyo-night.toml"
 link_config "$ROOT/bootstrap/zshenv" "$HOME/.zshenv"
 

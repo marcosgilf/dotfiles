@@ -154,16 +154,12 @@ contains "$TMP/fresh.out" 'Warning: retained stderr warning'
 absent "$TMP/fresh.out" '`brew bundle` complete!'
 contains "$TMP/fresh.out" 'Install complete.'
 grep -Fx '22' "$fresh_home/.nvm/alias/default" >/dev/null
-[ "$(readlink "$fresh_home/.config/superfile/config.toml")" = "$ROOT/superfile/config.toml" ]
-[ "$(readlink "$fresh_home/.config/superfile/hotkeys.toml")" = "$ROOT/superfile/hotkeys.toml" ]
-[ "$(readlink "$fresh_home/.config/superfile/theme/tokyo-night.toml")" = "$ROOT/superfile/themes/tokyo-night.toml" ]
-contains "$ROOT/superfile/config.toml" 'theme = "tokyo-night"'
-contains "$ROOT/superfile/config.toml" 'zoxide_support = true'
-contains "$ROOT/superfile/themes/tokyo-night.toml" 'full_screen_bg = "#1a1b26"'
-absent "$ROOT/superfile/themes/tokyo-night.toml" '@BACKGROUND@'
-contains "$ROOT/superfile/hotkeys.toml" "list_up = ['k', '']"
-contains "$ROOT/superfile/hotkeys.toml" "parent_directory = ['h', 'left', 'backspace']"
-contains "$ROOT/superfile/hotkeys.toml" "open_zoxide = ['z', '']"
+[ "$(readlink "$fresh_home/.config/nvim")" = "$ROOT/nvim" ]
+contains "$ROOT/nvim/init.lua" 'bg = "#1a1b26"'
+contains "$ROOT/nvim/init.lua" 'fg = "#a9b1d6"'
+absent "$ROOT/nvim/init.lua" '@BACKGROUND@'
+absent "$ROOT/nvim/init.lua" 'require("config.lazy")'
+[ ! -e "$fresh_home/.local/share/nvim/lazy" ]
 contains "$fresh_log/curl" 'pi.dev/install.sh'
 contains "$fresh_log/managed" 'managed install invoked'
 absent "$fresh_log/npm" 'install --global'
@@ -299,5 +295,6 @@ HOME="$uninstall_home" XDG_CONFIG_HOME="$uninstall_home/.config" \
 contains "$TMP/uninstall.out" 'Would uninstall cask: handy'
 contains "$TMP/uninstall.out" 'Would uninstall cask: font-jetbrains-mono-nerd-font'
 contains "$TMP/uninstall.out" 'Would uninstall formula: bun'
+absent "$TMP/uninstall.out" 'Neovim plugins'
 
 printf 'Installer smoke tests passed.\n'

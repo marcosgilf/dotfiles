@@ -12,7 +12,6 @@ render() {
   sed \
     -e "s|@THEME_NAME@|$THEME_NAME|g" \
     -e "s|@HERDR_THEME@|$HERDR_THEME|g" \
-    -e "s|@NVIM_COLORSCHEME@|$NVIM_COLORSCHEME|g" \
     -e "s|@BACKGROUND@|$BACKGROUND|g" \
     -e "s|@DARK_BACKGROUND@|$DARK_BACKGROUND|g" \
     -e "s|@DARKER_BACKGROUND@|$DARKER_BACKGROUND|g" \
@@ -45,9 +44,7 @@ render() {
 
 render "$ROOT/ghostty/config.ghostty.tmpl" "$ROOT/ghostty/config.ghostty"
 render "$ROOT/herdr/config.toml.tmpl" "$ROOT/herdr/config.toml"
-render "$ROOT/nvim/lua/plugins/tokyo-night.lua.tmpl" "$ROOT/nvim/lua/plugins/tokyo-night.lua"
-render "$ROOT/superfile/config.toml.tmpl" "$ROOT/superfile/config.toml"
-render "$ROOT/superfile/themes/tokyo-night.toml.tmpl" "$ROOT/superfile/themes/tokyo-night.toml"
+render "$ROOT/nvim/init.lua.tmpl" "$ROOT/nvim/init.lua"
 render "$ROOT/zsh/starship.toml.tmpl" "$ROOT/zsh/starship.toml"
 
 render_brewfile() {
@@ -67,15 +64,13 @@ render_catalog() {
   catalog_tmp=$(mktemp "${TMPDIR:-/tmp}/dotfiles-catalog.XXXXXX")
   readme_tmp=$(mktemp "$ROOT/README.md.XXXXXX")
   {
-    for scope in core optional ghostty plugins runtime editor superfile; do
+    for scope in core optional ghostty plugins runtime; do
       case "$scope" in
         core) heading='Core tools' ;;
         optional) heading='Optional tools' ;;
         ghostty) heading='Installed with Ghostty' ;;
         plugins) heading='Zsh plugins' ;;
         runtime) heading='Runtime-managed tools' ;;
-        editor) heading='Neovim plugins' ;;
-        superfile) heading='Superfile integrations' ;;
       esac
       found=0
       for record in "${PROGRAMS[@]}"; do

@@ -6,7 +6,6 @@ source "$ROOT/config/programs.zsh"
 readonly CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 readonly ZDOTDIR=${ZDOTDIR:-$CONFIG_HOME/zsh}
 readonly NVM_DIR="$HOME/.nvm"
-readonly NVIM_PLUGIN_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/${NVIM_APPNAME:-nvim}/lazy"
 dry_run=0
 
 case "${1:-}" in
@@ -33,7 +32,7 @@ fi
 print 'This removes dotfiles-managed dependencies but keeps the repository and config files:'
 print -r -- '- Homebrew formulae and casks configured in config/programs.zsh'
 print -r -- "- all Node versions and global npm packages in $NVM_DIR"
-print -r -- "- dotfiles Zsh plugin clones and Neovim plugins in $NVIM_PLUGIN_DIR"
+print -r -- '- dotfiles Zsh plugin clones'
 print 'Pi settings, credentials, sessions, config symlinks, Homebrew, and Xcode CLT stay.'
 print 'Homebrew shared dependencies are left alone; brew autoremove will not run.'
 
@@ -126,18 +125,6 @@ for record in "${PROGRAMS[@]}"; do
     fi
   fi
 done
-
-if [[ -d "$NVIM_PLUGIN_DIR" ]]; then
-  if [[ -L "$NVIM_PLUGIN_DIR" ]]; then
-    print -u2 "Keeping symlinked Neovim plugin directory: $NVIM_PLUGIN_DIR"
-    uninstall_failed=1
-  elif (( dry_run )); then
-    print "Would remove Neovim plugins: $NVIM_PLUGIN_DIR"
-  else
-    rm -rf "$NVIM_PLUGIN_DIR"
-    print "Removed Neovim plugins: $NVIM_PLUGIN_DIR"
-  fi
-fi
 
 if (( uninstall_failed )); then
   print -u2 'Some Homebrew packages remain; review failures above and rerun if needed.'

@@ -1,9 +1,8 @@
 THEME_NAME='tokyo-night'
 THEME_LABEL='Tokyo Night'
-THEME_DESCRIPTION='Shared dark palette used by Ghostty, Herdr, Neovim, Superfile, and Starship.'
+THEME_DESCRIPTION='Shared dark palette used by Ghostty, Herdr, Neovim, and Starship.'
 THEME_DOCS_URL='https://github.com/folke/tokyonight.nvim'
 HERDR_THEME='tokyo-night'
-NVIM_COLORSCHEME='tokyonight-night'
 
 BACKGROUND='#1a1b26'
 DARK_BACKGROUND='#13141c'
