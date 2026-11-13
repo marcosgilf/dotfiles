@@ -150,8 +150,6 @@ contains "$ROOT/Brewfile" 'brew "nvm"'
 absent "$ROOT/Brewfile" 'brew "bun"'
 contains "$ROOT/README.md" '[Bun](https://bun.sh/)'
 contains "$ROOT/README.md" '[Tokyo Night](https://github.com/folke/tokyonight.nvim)'
-absent "$ROOT/README.md" 'Superfile'
-absent "$ROOT/Brewfile" 'superfile'
 contains "$TMP/fresh.out" 'Warning: retained stderr warning'
 absent "$TMP/fresh.out" '`brew bundle` complete!'
 contains "$TMP/fresh.out" 'Install complete.'
@@ -162,7 +160,6 @@ contains "$ROOT/nvim/init.lua" 'fg = "#a9b1d6"'
 absent "$ROOT/nvim/init.lua" '@BACKGROUND@'
 absent "$ROOT/nvim/init.lua" 'require("config.lazy")'
 [ ! -e "$fresh_home/.local/share/nvim/lazy" ]
-[ ! -e "$fresh_home/.config/superfile" ]
 contains "$fresh_log/curl" 'pi.dev/install.sh'
 contains "$fresh_log/managed" 'managed install invoked'
 absent "$fresh_log/npm" 'install --global'
@@ -215,22 +212,14 @@ fi
 upgrade_home="$TMP/upgrade"
 upgrade_zsh="$TMP/upgrade-zsh"
 upgrade_log="$TMP/upgrade-log"
-mkdir -p "$upgrade_home/.config/superfile/theme" "$upgrade_zsh/plugins/zsh-vi-mode" "$upgrade_log"
+mkdir -p "$upgrade_home/.config" "$upgrade_zsh/plugins/zsh-vi-mode" "$upgrade_log"
 : > "$upgrade_zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh"
 ln -s "$upgrade_zsh" "$upgrade_home/.config/zsh"
-ln -s "$ROOT/superfile/config.toml" "$upgrade_home/.config/superfile/config.toml"
-ln -s "$ROOT/superfile/hotkeys.toml" "$upgrade_home/.config/superfile/hotkeys.toml"
-ln -s "$ROOT/superfile/themes/tokyo-night.toml" "$upgrade_home/.config/superfile/theme/tokyo-night.toml"
-printf 'keep\n' > "$upgrade_home/.config/superfile/custom.toml"
 run_installer "$upgrade_home" "$TMP/upgrade.out" v22.19.0 22.19.0 0 "$upgrade_log"
 contains "$TMP/upgrade.out" 'Detected installed Zsh plugins'
 absent "$TMP/upgrade.out" 'Choose Zsh plugins'
 contains "$upgrade_home/.config/mac-setup/zsh-plugins" 'zsh-vi-mode'
 absent "$upgrade_home/.config/mac-setup/zsh-plugins" 'zsh-autosuggestions'
-[ ! -L "$upgrade_home/.config/superfile/config.toml" ]
-[ ! -L "$upgrade_home/.config/superfile/hotkeys.toml" ]
-[ ! -L "$upgrade_home/.config/superfile/theme/tokyo-night.toml" ]
-grep -Fx 'keep' "$upgrade_home/.config/superfile/custom.toml" >/dev/null
 
 # Existing npm-installed Pi migrates and user can decline individual Zsh plugins.
 migration_home="$TMP/migration"
@@ -307,6 +296,5 @@ contains "$TMP/uninstall.out" 'Would uninstall cask: handy'
 contains "$TMP/uninstall.out" 'Would uninstall cask: font-jetbrains-mono-nerd-font'
 contains "$TMP/uninstall.out" 'Would uninstall formula: bun'
 absent "$TMP/uninstall.out" 'Neovim plugins'
-absent "$TMP/uninstall.out" 'formula: superfile'
 
 printf 'Installer smoke tests passed.\n'

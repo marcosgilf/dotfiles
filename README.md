@@ -52,6 +52,23 @@ Theme colors and metadata live in `theme/tokyo-night.sh`. Run
 `scripts/render-configs.sh` to regenerate `Brewfile`, this inventory, and app
 configuration files.
 
+### Removing a program
+
+1. Remove its active metadata, app templates, renderer/install hooks, and docs.
+   Regenerate `Brewfile` and this inventory.
+2. Test shared behavior with active or mock records. Do not keep negative tests
+   that name removed programs.
+3. If old installs need config cleanup, keep exact-target unlink calls in
+   `install.sh`. Remove only symlinks that still point to repo-owned paths;
+   preserve other files and links.
+4. Remove temporary unlink calls and their helper after every managed install
+   has run the updated installer once. Then mark removal complete. Package
+   uninstall is separate; removing a manifest entry does not uninstall an
+   existing Homebrew package.
+
+Current state: program and catalog removal complete; legacy-link cleanup remains
+until the update condition above is met.
+
 ## Install
 
 Requirements: macOS 13+. Install Apple Command Line Tools first if missing;
