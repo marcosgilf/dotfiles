@@ -9,7 +9,6 @@ typeset -ga PROGRAMS=(
   'brew_formula|core|nvm|nvm|Node.js version manager.|https://github.com/nvm-sh/nvm|-'
   'brew_formula|core|ripgrep|ripgrep|Fast recursive text search.|https://github.com/BurntSushi/ripgrep|-'
   'brew_formula|core|starship|Starship|Cross-shell prompt.|https://starship.rs/|-'
-  'brew_formula|core|superfile|Superfile|Terminal file manager with custom hotkeys and Tokyo Night theme.|https://superfile.dev/|-'
   'brew_formula|core|zoxide|zoxide|Frecency-based directory navigation.|https://github.com/ajeetdsouza/zoxide|-'
   'brew_formula|core|zsh|Zsh|Interactive shell.|https://www.zsh.org/|-'
   'brew_formula|optional|bun|Bun|JavaScript runtime, package manager, test runner, and bundler.|https://bun.sh/|.bun/bin/bun'
@@ -23,15 +22,6 @@ typeset -ga PROGRAMS=(
   'zsh_plugin|plugins|zdharma-continuum/fast-syntax-highlighting|fast-syntax-highlighting|Highlights shell syntax while editing commands.|https://github.com/zdharma-continuum/fast-syntax-highlighting|-'
   'nvm_runtime|runtime|22|Node.js|JavaScript runtime; fresh installs use version 22, and Pi needs version 22.19 or newer.|https://nodejs.org/|-'
   'managed_app|runtime|pi|Pi|Terminal coding agent installed with its managed installer.|https://github.com/earendil-works/pi|-|22.19'
-  'catalog|editor|LazyVim|LazyVim|Opinionated Neovim setup and plugin collection.|https://www.lazyvim.org/|-'
-  'catalog|editor|lazy.nvim|lazy.nvim|Plugin manager used by LazyVim.|https://github.com/folke/lazy.nvim|-'
-  'catalog|editor|nvim-lspconfig|nvim-lspconfig|Neovim language server configurations.|https://github.com/neovim/nvim-lspconfig|-'
-  'catalog|editor|nvim-treesitter|nvim-treesitter|Treesitter parsing and highlighting for Neovim.|https://github.com/nvim-treesitter/nvim-treesitter|-'
-  'catalog|editor|blink.cmp|blink.cmp|Completion engine for Neovim.|https://github.com/Saghen/blink.cmp|-'
-  'catalog|editor|gitsigns.nvim|gitsigns.nvim|Git change indicators for Neovim.|https://github.com/lewis6991/gitsigns.nvim|-'
-  'catalog|superfile|superfile-hotkeys|Vim-like Superfile hotkeys|Uses h/j/k/l, / search, and familiar copy/paste keys.|https://superfile.dev/configure/custom-hotkeys/|-'
-  'catalog|superfile|superfile-zoxide|Superfile Zoxide plugin|Enables frequent-directory navigation with z.|https://superfile.dev/list/plugin-list/|-'
-  'catalog|superfile|superfile-theme|Superfile Tokyo Night theme|Uses colors from the shared theme configuration.|https://superfile.dev/configure/custom-theme/|-'
 )
 
 typeset -g PROGRAM_TYPE='' PROGRAM_SCOPE='' PROGRAM_PACKAGE='' PROGRAM_NAME=''
@@ -50,8 +40,7 @@ read_program() {
   }
   case "$PROGRAM_TYPE:$PROGRAM_SCOPE" in
     brew_formula:core|brew_formula:optional|brew_cask:optional|brew_cask:ghostty|\
-      zsh_plugin:plugins|nvm_runtime:runtime|managed_app:runtime|\
-      catalog:editor|catalog:superfile) ;;
+      zsh_plugin:plugins|nvm_runtime:runtime|managed_app:runtime) ;;
     *) print -u2 -- "Unsupported program type or scope: $PROGRAM_TYPE:$PROGRAM_SCOPE"; return 1 ;;
   esac
 }

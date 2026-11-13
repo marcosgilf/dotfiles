@@ -1,2 +1,27 @@
--- bootstrap lazy.nvim, LazyVim and your plugins
-require("config.lazy")
+-- Generated from theme/tokyo-night.sh. Do not edit.
+vim.o.termguicolors = true
+vim.o.background = "dark"
+
+vim.api.nvim_set_hl(0, "Normal", { fg = "#a9b1d6", bg = "#1a1b26" })
+vim.api.nvim_set_hl(0, "NormalFloat", { fg = "#a9b1d6", bg = "#13141c" })
+vim.api.nvim_set_hl(0, "Comment", { fg = "#565f89" })
+vim.api.nvim_set_hl(0, "Constant", { fg = "#eb927b" })
+vim.api.nvim_set_hl(0, "String", { fg = "#9ece6a" })
+vim.api.nvim_set_hl(0, "Identifier", { fg = "#f7768e" })
+vim.api.nvim_set_hl(0, "Function", { fg = "#7aa2f7" })
+vim.api.nvim_set_hl(0, "Statement", { fg = "#ad8ee6" })
+vim.api.nvim_set_hl(0, "Type", { fg = "#449dab" })
+vim.api.nvim_set_hl(0, "Special", { fg = "#e0af68" })
+vim.api.nvim_set_hl(0, "LineNr", { fg = "#565f89" })
+vim.api.nvim_set_hl(0, "CursorLine", { bg = "#24283b" })
+vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#7aa2f7", bold = true })
+vim.api.nvim_set_hl(0, "Visual", { bg = "#292e42" })
+vim.api.nvim_set_hl(0, "Search", { fg = "#c0caf5", bg = "#7aa2f7" })
+vim.api.nvim_set_hl(0, "StatusLine", { fg = "#a9b1d6", bg = "#24283b" })
+vim.api.nvim_set_hl(0, "StatusLineNC", { fg = "#565f89", bg = "#13141c" })
+vim.api.nvim_set_hl(0, "Pmenu", { fg = "#a9b1d6", bg = "#13141c" })
+vim.api.nvim_set_hl(0, "PmenuSel", { fg = "#c0caf5", bg = "#292e42" })
+vim.api.nvim_set_hl(0, "DiagnosticError", { fg = "#f7768e" })
+vim.api.nvim_set_hl(0, "DiagnosticWarn", { fg = "#e0af68" })
+vim.api.nvim_set_hl(0, "DiagnosticInfo", { fg = "#7aa2f7" })
+vim.api.nvim_set_hl(0, "DiagnosticHint", { fg = "#449dab" })

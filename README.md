@@ -3,9 +3,9 @@
 Opinionated macOS development environment with one shared Tokyo Night theme.
 
 Application configs live in top-level directories (`zsh/`, `nvim/`, `ghostty/`,
-`herdr/`, `superfile/`, and `pi/`). Setup scripts, tests, and shared theme data
-stay separate. Installer handles app-specific paths and backs up existing
-configs before it links them.
+and `herdr/`). Setup scripts, tests, and shared theme data stay separate.
+Installer handles app-specific paths and backs up existing configs before it
+links them.
 
 ## Included tools
 
@@ -19,7 +19,6 @@ configs before it links them.
 - [nvm](https://github.com/nvm-sh/nvm) — Node.js version manager.
 - [ripgrep](https://github.com/BurntSushi/ripgrep) — Fast recursive text search.
 - [Starship](https://starship.rs/) — Cross-shell prompt.
-- [Superfile](https://superfile.dev/) — Terminal file manager with custom hotkeys and Tokyo Night theme.
 - [zoxide](https://github.com/ajeetdsouza/zoxide) — Frecency-based directory navigation.
 - [Zsh](https://www.zsh.org/) — Interactive shell.
 
@@ -42,21 +41,8 @@ configs before it links them.
 - [Node.js](https://nodejs.org/) — JavaScript runtime; fresh installs use version 22, and Pi needs version 22.19 or newer.
 - [Pi](https://github.com/earendil-works/pi) — Terminal coding agent installed with its managed installer.
 
-### Neovim plugins
-- [LazyVim](https://www.lazyvim.org/) — Opinionated Neovim setup and plugin collection.
-- [lazy.nvim](https://github.com/folke/lazy.nvim) — Plugin manager used by LazyVim.
-- [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) — Neovim language server configurations.
-- [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) — Treesitter parsing and highlighting for Neovim.
-- [blink.cmp](https://github.com/Saghen/blink.cmp) — Completion engine for Neovim.
-- [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) — Git change indicators for Neovim.
-
-### Superfile integrations
-- [Vim-like Superfile hotkeys](https://superfile.dev/configure/custom-hotkeys/) — Uses h/j/k/l, / search, and familiar copy/paste keys.
-- [Superfile Zoxide plugin](https://superfile.dev/list/plugin-list/) — Enables frequent-directory navigation with z.
-- [Superfile Tokyo Night theme](https://superfile.dev/configure/custom-theme/) — Uses colors from the shared theme configuration.
-
 ### Theme
-- [Tokyo Night](https://github.com/folke/tokyonight.nvim) — Shared dark palette used by Ghostty, Herdr, Neovim, Superfile, and Starship.
+- [Tokyo Night](https://github.com/folke/tokyonight.nvim) — Shared dark palette used by Ghostty, Herdr, Neovim, and Starship.
 <!-- END GENERATED PROGRAM CATALOG -->
 
 Program metadata lives in `config/programs.zsh`. Add a supported Homebrew
@@ -109,12 +95,13 @@ open -a Ghostty
 open -a Handy
 herdr
 pi
-spf
 nvim
 ```
 
-Start a new shell after installation. Neovim plugins install on first launch;
-`nvim/lazy-lock.json` records their versions.
+Start a new shell after installation. Neovim uses its built-in defaults with
+colors from the shared theme file. Add plugins and other settings in
+`nvim/init.lua.tmpl` when needed; rerun `scripts/render-configs.sh` to apply
+changes.
 
 ## Update
 
@@ -123,9 +110,6 @@ cd ~/dotfiles
 git pull
 ./install.sh
 ```
-
-Run `:Lazy sync` inside Neovim when intentionally updating plugins, then commit
-`nvim/lazy-lock.json`.
 
 ## Test
 
