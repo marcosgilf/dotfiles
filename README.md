@@ -69,6 +69,17 @@ configuration files.
 Current state: program and catalog removal complete; legacy-link cleanup remains
 until the update condition above is met.
 
+## Spanish ISO keyboard shortcuts
+
+- In Ghostty, bind physical W3C key codes for symbol keys, not characters from
+  the active layout. Use names such as `backslash`, `intl_backslash`, and
+  `bracket_left`; `key_*` names are for letters, such as `key_a`.
+- In shells and multiplexers, prefer letters after a prefix, such as
+  `prefix+h/j/k/l`, instead of punctuation keys.
+- Remap `\` and `|` at the OS level if you type them often.
+- Do not use AltGr-dependent characters for shortcuts. Their output changes
+  with keyboard layout and may reach the application as text instead of a key.
+
 ## Install
 
 Requirements: macOS 13+. Install Apple Command Line Tools first if missing;
