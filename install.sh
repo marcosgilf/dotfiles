@@ -97,18 +97,28 @@ brew_flag() {
   esac
 }
 
-dependency_installed() {
-  local type=$1 package=$2 detect_path=$3 flag
-  [[ "$detect_path" != '-' && -x "$HOME/$detect_path" ]] && return 0
+brew_installed() {
+  local type=$1 package=$2 flag
   flag=$(brew_flag "$type")
   brew list "$flag" "$package" >/dev/null 2>&1
 }
 
-install_if_missing() {
+dependency_installed() {
+  local type=$1 package=$2 detect_path=$3
+  [[ "$detect_path" != '-' && -x "$HOME/$detect_path" ]] && return 0
+  brew_installed "$type" "$package"
+}
+
+install_or_upgrade() {
   local type=$1 package=$2 detect_path=$3 flag
-  dependency_installed "$type" "$package" "$detect_path" && return 0
   flag=$(brew_flag "$type")
-  brew install "$flag" "$package"
+  if brew_installed "$type" "$package"; then
+    brew upgrade "$flag" "$package"
+  elif [[ "$detect_path" != '-' && -x "$HOME/$detect_path" ]]; then
+    "$HOME/$detect_path" upgrade
+  else
+    brew install "$flag" "$package"
+  fi
 }
 
 ask_optional_program() {
@@ -177,13 +187,13 @@ for record in "${PROGRAMS[@]}"; do
   read_program "$record"
   [[ "$PROGRAM_SCOPE" == optional && ( "$PROGRAM_TYPE" == brew_formula || "$PROGRAM_TYPE" == brew_cask ) ]] || continue
   [[ "${selected_programs[$PROGRAM_PACKAGE]:-0}" == 1 ]] || continue
-  install_if_missing "$PROGRAM_TYPE" "$PROGRAM_PACKAGE" "$PROGRAM_DETECT_PATH"
+  install_or_upgrade "$PROGRAM_TYPE" "$PROGRAM_PACKAGE" "$PROGRAM_DETECT_PATH"
 done
 if [[ "${selected_programs[ghostty]:-0}" == 1 ]]; then
   for record in "${PROGRAMS[@]}"; do
     read_program "$record"
     [[ "$PROGRAM_SCOPE" == ghostty ]] || continue
-    install_if_missing "$PROGRAM_TYPE" "$PROGRAM_PACKAGE" "$PROGRAM_DETECT_PATH"
+    install_or_upgrade "$PROGRAM_TYPE" "$PROGRAM_PACKAGE" "$PROGRAM_DETECT_PATH"
   done
 fi
 trace 'Optional dependencies updated'

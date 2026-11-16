@@ -33,7 +33,7 @@ case "$1" in
     fi
     exit 0
     ;;
-  install) printf '%s\n' "$*" >> "$TEST_LOG/brew" ;;
+  install|upgrade) printf '%s\n' "$*" >> "$TEST_LOG/brew" ;;
   bundle)
     printf 'Using bat\n'
     printf '\033[32m`brew bundle` complete! 11 Brewfile dependencies now installed.\033[0m\n'
@@ -164,6 +164,11 @@ contains "$fresh_log/curl" 'pi.dev/install.sh'
 contains "$fresh_log/managed" 'managed install invoked'
 absent "$fresh_log/npm" 'install --global'
 contains "$fresh_log/pi" 'false update --all'
+contains "$fresh_log/brew" 'upgrade --formula bun'
+contains "$fresh_log/brew" 'upgrade --formula herdr'
+contains "$fresh_log/brew" 'upgrade --cask ghostty'
+contains "$fresh_log/brew" 'upgrade --cask handy'
+contains "$fresh_log/brew" 'upgrade --cask font-jetbrains-mono-nerd-font'
 contains "$fresh_home/.config/mac-setup/zsh-plugins" 'zsh-autosuggestions'
 contains "$fresh_home/.config/mac-setup/zsh-plugins" 'fast-syntax-highlighting'
 
@@ -200,10 +205,11 @@ contains "$TMP/bun.out" 'Docs: https://bun.sh/'
 bun_existing_home="$TMP/bun-existing"
 bun_existing_log="$TMP/bun-existing-log"
 mkdir -p "$bun_existing_home/.bun/bin" "$bun_existing_log"
-printf '#!/bin/sh\nexit 0\n' > "$bun_existing_home/.bun/bin/bun"
+printf '#!/bin/sh\n[ "$1" = upgrade ] || exit 2\nprintf "%%s\\n" "$*" >> "$TEST_LOG/bun"\n' > "$bun_existing_home/.bun/bin/bun"
 chmod +x "$bun_existing_home/.bun/bin/bun"
 run_installer "$bun_existing_home" "$TMP/bun-existing.out" system system 0 "$bun_existing_log" "$TMP/plugin-answers" 1 0
 contains "$TMP/bun-existing.out" 'Using Bun'
+contains "$bun_existing_log/bun" 'upgrade'
 if [ -f "$bun_existing_log/brew" ]; then
   absent "$bun_existing_log/brew" 'install --formula bun'
 fi
