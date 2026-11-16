@@ -89,7 +89,8 @@ git clone https://github.com/marcosgilf/dotfiles ~/dotfiles
 Installer:
 
 - installs configured core programs; offers configured optional programs and
-  Zsh plugins; preserves saved plugin choices and detects existing plugin
+  Zsh plugins; updates installed optional programs and selected Ghostty
+  dependencies; preserves saved plugin choices and detects existing plugin
   checkouts on updates
 - preserves an existing nvm default/active version; sets Node.js 22 as default
   when no nvm Node is selected
