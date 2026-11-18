@@ -80,6 +80,8 @@ until the update condition above is met.
 - Do not use AltGr-dependent characters for shortcuts. Their output changes
   with keyboard layout and may reach the application as text instead of a key.
 
+See [per-program shortcut reference](docs/shortcuts.md) for current bindings.
+
 ## Install
 
 Requirements: macOS 13+. Install Apple Command Line Tools first if missing;

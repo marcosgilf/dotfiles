@@ -2,6 +2,7 @@
 set -euo pipefail
 
 readonly ROOT=${0:A:h:h}
+readonly NVIM_LOCAL_CONFIG_MARKER='-- BEGIN LOCAL CONFIG (preserved)'
 source "$ROOT/theme/tokyo-night.sh"
 source "$ROOT/config/programs.zsh"
 
@@ -44,7 +45,21 @@ render() {
 
 render "$ROOT/ghostty/config.ghostty.tmpl" "$ROOT/ghostty/config.ghostty"
 render "$ROOT/herdr/config.toml.tmpl" "$ROOT/herdr/config.toml"
-render "$ROOT/nvim/init.lua.tmpl" "$ROOT/nvim/init.lua"
+render_nvim() {
+  local nvim_output="$ROOT/nvim/init.lua" nvim_tmp
+  nvim_tmp=$(mktemp "$ROOT/nvim/init.lua.XXXXXX")
+  render "$ROOT/nvim/init.lua.tmpl" "$nvim_tmp"
+  if [[ -f "$nvim_output" ]]; then
+    awk -v marker="$NVIM_LOCAL_CONFIG_MARKER" '
+      $0 == marker { keep = 1; next }
+      keep { print }
+    ' "$nvim_output" >> "$nvim_tmp"
+  fi
+  chmod 644 "$nvim_tmp"
+  mv "$nvim_tmp" "$nvim_output"
+}
+
+render_nvim
 render "$ROOT/zsh/starship.toml.tmpl" "$ROOT/zsh/starship.toml"
 
 render_brewfile() {
