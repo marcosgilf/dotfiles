@@ -2,8 +2,8 @@
 
 This reference covers shortcuts configured by these dotfiles and the Ghostty,
 Herdr, and Neovim defaults most likely to conflict. Key notation means **press
-keys in sequence** unless written as a chord. For example, `Ctrl+B`, then `C`
-is a Herdr prefix binding; `Ctrl+Option+H` is one chord.
+keys in sequence** unless written as a chord. For example, `Ctrl+B`, then `T`
+opens a Herdr tab; `Ctrl+Option+H` is one chord.
 
 For Spanish ISO layout guidance, see [Spanish ISO keyboard shortcuts](../README.md#spanish-iso-keyboard-shortcuts).
 Bracketed letters in labels are mnemonics, not keys to type.
@@ -17,23 +17,39 @@ Bracketed letters in labels are mnemonics, not keys to type.
 | `Shift+Insert` | Paste from clipboard |
 | `Ctrl+Insert` | Copy to clipboard |
 | `Shift+Enter` | Send modified Enter (`CSI-u`) to terminal app |
+| `⌘Option+Shift+Arrow` | Resize Ghostty split (dotfiles binding) |
 
 ### Common macOS defaults
 
 | Shortcut | Action |
 | --- | --- |
-| `⌘C` / `⌘V` | Copy / paste |
-| `⌘T` / `⌘N` | New tab / new window |
-| `⌘W` / `⌘Shift+W` | Close surface / close window |
-| `⌘D` / `⌘Shift+D` | Split right / split down |
+| `⌘c` / `⌘v` | [c]opy / paste |
+| `⌘t` / `⌘n` | New [t]ab / new wi[n]dow |
+| `⌘w` / `⌘W` | Close surface / close [W]indow |
+| `⌘d` / `⌘D` | Split right / split [D]own |
 | `⌘Shift+Enter` | Zoom split |
 | `⌘1`–`⌘8` / `⌘9` | Select tab 1–8 / last tab |
-| `⌘Shift+[` / `⌘Shift+]` | Previous / next tab |
+| `Ctrl+tab` / `Ctrl+Shift+tab` | Previous [tab] / next [TAB] |
 | `⌘Option+Arrow` | Focus Ghostty split |
-| `⌘Ctrl+Arrow` | Resize Ghostty split |
+| `⌘Ctrl+Arrow` | Default split resize (overridden by dotfiles) |
 
-Ghostty defaults keep these `⌘` shortcuts. Herdr uses separate `Ctrl+Option`
-shortcuts, so Ghostty keeps control of its own tabs and splits.
+Other Ghostty defaults that can capture direct `⌘` proposals:
+
+| Shortcut | Default action |
+| --- | --- |
+| `⌘↑` / `⌘↓` / `⌘Shift+↑` / `⌘Shift+↓` | Jump to prompt |
+| `⌘[` / `⌘]` | Previous / next Ghostty split |
+| `⌘Option+W` / `⌘Option+Shift+W` | Close tab / close all windows |
+| `⌘Shift+P` | Command palette |
+| `⌘F` / `⌘G` / `⌘Shift+G` | Search / next / previous search result |
+| `⌘Q` / `⌘K` | Quit Ghostty / clear screen |
+| `⌘Shift+T` / `⌘Z` / `⌘Shift+Z` | Undo / undo / redo |
+| `⌘A` / `⌘Option+I` | Select all / inspector |
+| `⌘Ctrl+F` / `⌘Shift+V` | Full screen / paste from selection |
+
+Dotfiles unbind the default `⌘Ctrl+Arrow` resize keys and replace them with
+`⌘Option+Shift+Arrow`. Herdr uses separate `Ctrl+Option` shortcuts, so Ghostty
+keeps control of its own tabs and splits.
 
 Run `ghostty +list-keybinds --default` to inspect defaults for your installed
 Ghostty version.
@@ -45,26 +61,34 @@ active bindings.
 
 | Shortcut | Action |
 | --- | --- |
-| `prefix+c` | New tab |
-| `prefix+p` / `prefix+n` | Previous / next tab |
+| `prefix+t` | New [t]ab |
+| `prefix+shift+t` | Close [t]ab |
+| `prefix+p` / `prefix+n` | [p]revious / [n]ext tab |
 | `prefix+1..9` | Switch tab |
 | `prefix+h/j/k/l` | Focus pane left / down / up / right |
-| `prefix+v` / `prefix+-` | Split right / split down |
+| `prefix+d` / `prefix+shift+d` | Split right / split [d]own |
 | `prefix+z` / `prefix+x` | Zoom / close pane |
-| `prefix+shift+x` | Close tab |
-| `prefix+w` | Workspace picker |
-| `prefix+shift+n` / `prefix+shift+d` | New / close workspace |
+| `prefix+shift+p` | Workspace [p]icker |
+| `prefix+w` / `prefix+shift+w` | New / close workspace |
+| `prefix+shift+e` / `prefix+shift+a` / `prefix+shift+x` | Rename tab / workspace / pane |
 | `prefix+q` | Detach; keep session running |
 
 Direct shortcuts use `Ctrl+Option` on macOS (`alt` in Herdr config):
 
 | Shortcut | Action |
 | --- | --- |
-| `Ctrl+Option+H/J/K/L` | Focus pane left / down / up / right |
-| `Ctrl+Option+P/N` | Previous / next tab |
-| `Ctrl+Option+C` | New tab |
-| `Ctrl+Option+D` / `Ctrl+Option+Shift+D` | Split right / split down |
-| `Ctrl+Option+Z` | Zoom pane |
+| `Ctrl+Option+h/j/k/l` | Focus pane left / down / up / right |
+| `Ctrl+Option+p/n` | [p]revious / [n]ext tab |
+| `Ctrl+Option+t` | New [t]ab |
+| `Ctrl+Option+d` / `Ctrl+Option+Shift+d` | Split right / split down |
+| `Ctrl+Option+z` | [z]oom pane |
+
+These assignments replace conflicting Herdr defaults: new tab moves from
+`prefix+c` to `prefix+t`; split right/down move from `prefix+v` / `prefix+minus`
+to `prefix+d` / `prefix+shift+d`; and close tab moves to `prefix+shift+t`.
+Workspace picker, new workspace, and close workspace use `prefix+shift+p`,
+`prefix+w`, and `prefix+shift+w`. Rename tab, workspace, and pane move to
+`prefix+shift+e/a/x` to free the reused default bindings.
 
 ## Zsh
 
@@ -75,27 +99,27 @@ insert mode.
 | --- | --- |
 | `Up` / `Down` | Search command history by the text already typed |
 | `Ctrl+Left` / `Ctrl+Right` | Move one word backward / forward |
-| `Ctrl+F` | Open the FZF file picker |
-| `Ctrl+\` | Toggle autosuggestions |
+| `Ctrl+f` | Open the FZF [f]ile picker |
+| `Ctrl+s` | Toggle auto[s]uggestions |
 
-`Ctrl+\` may be hard to type on Spanish ISO layouts. Consider remapping it to
-a letter-based binding if it is inconvenient.
+The Zsh hook disables XON/XOFF so `Ctrl+s` reaches ZLE instead of pausing
+terminal output. `Ctrl+q` no longer resumes XON/XOFF-paused output.
 
 ## Neovim
 
-**Leader:** `Space`. For example, `<Space>sf` means press Space, then S,
-then F. Which-key shows available leader groups after you press Space.
+**Leader:** `Space`. For example, `<Space>sf` means press Space, then s,
+then f. Which-key shows available leader groups after you press Space.
 
 ### Core
 
 | Shortcut | Action |
 | --- | --- |
-| `Ctrl+H/J/K/L` | Focus split left / down / up / right |
+| `Ctrl+h/j/k/l` | Focus split left / down / up / right |
 | `Esc` | Clear search highlight in Normal mode |
 | `Esc Esc` | Leave Terminal mode; press `i` to resume terminal input (press Esc twice quickly) |
-| `<Space>e` | `[E]xplorer`: open Neo-tree and reveal current file |
+| `<Space>e` | `[e]xplorer`: open Neo-tree and reveal current file |
 | `<Space>q` | Put diagnostics in the location list |
-| `<Space>f` | `[F]ormat` current buffer |
+| `<Space>f` | `[f]ormat` current buffer |
 | `y` / `p` | Yank / paste using the system clipboard |
 
 ### Telescope
@@ -117,7 +141,7 @@ then F. Which-key shows available leader groups after you press Space.
 
 | Shortcut | Action |
 | --- | --- |
-| `[c` / `]c` | Previous / next changed hunk |
+| `<Space>hn` / `<Space>hP` | Next / previous changed hunk |
 | `<Space>hs` / `<Space>hr` | Stage / reset hunk |
 | `<Space>hS` / `<Space>hR` | Stage / reset buffer |
 | `<Space>hp` / `<Space>hi` | Preview hunk / inline preview |
@@ -145,7 +169,8 @@ shows docs, `Ctrl+E` dismisses, and `Ctrl+K` shows signature help. `Tab` and
 
 ### Neo-tree
 
-The Neo-tree window has its own mappings. Press `?` there to see its active help.
+The Neo-tree window has its own mappings. Use `gh` for help; symbol-key defaults
+are disabled in favor of letter sequences for Spanish ISO layouts.
 
 | Shortcut | Action |
 | --- | --- |
@@ -155,10 +180,14 @@ The Neo-tree window has its own mappings. Press `?` there to see its active help
 | `T` / `u` / `U` | Trash / undo trash / restore |
 | `c` / `m` | [c]opy / [m]ove to path |
 | `y` / `x` / `p` | Copy / cut / paste with Neo-tree clipboard |
-| `H` / `/` / `f` | Toggle hidden / fuzzy find / filter |
+| `H` / `f` | Toggle hidden / filter |
+| `gf` / `gs` | Fuzzy find / fuzzy sort |
+| `gp` / `gn` | Previous / next Git-modified file |
+| `gr` | Set root |
+| `gP` / `gN` | Previous / next Neo-tree source |
 | `P` / `l` | Preview / focus preview |
 | `C` / `z` / `R` | Close node / collapse all / refresh |
-| `.` / `Backspace` | Set root / navigate up |
+| `Backspace` | Navigate up |
 | `S` / `s` / `t` | Open split / vertical split / new tab |
 | `q` | Close Neo-tree window |
 

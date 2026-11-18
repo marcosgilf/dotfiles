@@ -159,9 +159,22 @@ absent "$ROOT/Brewfile" 'brew "bun"'
 contains "$ROOT/README.md" '[Bun](https://bun.sh/)'
 contains "$ROOT/README.md" '[Tokyo Night](https://github.com/folke/tokyonight.nvim)'
 contains "$ROOT/herdr/config.toml" 'focus_pane_left = ["prefix+h", "ctrl+alt+h"]'
-contains "$ROOT/herdr/config.toml" 'new_tab = ["prefix+c", "ctrl+alt+c"]'
+contains "$ROOT/herdr/config.toml" 'new_tab = ["prefix+t", "ctrl+alt+t"]'
+contains "$ROOT/herdr/config.toml" 'close_tab = "prefix+shift+t"'
+contains "$ROOT/herdr/config.toml" 'split_vertical = ["prefix+d", "ctrl+alt+d"]'
+contains "$ROOT/herdr/config.toml" 'split_horizontal = ["prefix+shift+d", "ctrl+alt+shift+d"]'
+contains "$ROOT/herdr/config.toml" 'workspace_picker = "prefix+shift+p"'
+contains "$ROOT/herdr/config.toml" 'new_workspace = "prefix+w"'
+contains "$ROOT/herdr/config.toml" 'close_workspace = "prefix+shift+w"'
+contains "$ROOT/herdr/config.toml" 'rename_tab = "prefix+shift+e"'
+contains "$ROOT/herdr/config.toml" 'rename_workspace = "prefix+shift+a"'
+contains "$ROOT/herdr/config.toml" 'rename_pane = "prefix+shift+x"'
 contains "$ROOT/herdr/config.toml" 'previous_tab = ["prefix+p", "ctrl+alt+p"]'
 contains "$ROOT/herdr/config.toml" 'next_tab = ["prefix+n", "ctrl+alt+n"]'
+contains "$ROOT/ghostty/config.ghostty" 'super+ctrl+arrow_up=unbind'
+contains "$ROOT/ghostty/config.ghostty" 'super+alt+shift+arrow_up=resize_split:up,10'
+contains "$ROOT/zsh/bindings.zsh" "bindkey '^S' autosuggest-toggle"
+contains "$ROOT/zsh/bindings.zsh" 'stty -ixon'
 contains "$TMP/fresh.out" 'Warning: retained stderr warning'
 absent "$TMP/fresh.out" '`brew bundle` complete!'
 contains "$TMP/fresh.out" 'Install complete.'
@@ -170,6 +183,16 @@ grep -Fx '22' "$fresh_home/.nvm/alias/default" >/dev/null
 contains "$ROOT/nvim/init.lua" 'bg = "#1a1b26"'
 contains "$ROOT/nvim/init.lua" 'fg = "#a9b1d6"'
 contains "$ROOT/nvim/init.lua" 'vim.g.have_nerd_font = true'
+contains "$ROOT/nvim/init.lua" 'ts_ls = {}, -- JavaScript and TypeScript'
+contains "$ROOT/nvim/init.lua" 'rust_analyzer = {},'
+contains "$ROOT/nvim/init.lua" 'pyright = {},'
+contains "$ROOT/nvim/init.lua" 'jdtls = {},'
+contains "$ROOT/nvim/init.lua" 'somesass_ls = {},'
+contains "$ROOT/nvim/init.lua" "vim.keymap.set('n', '<leader>hn'"
+contains "$ROOT/nvim/init.lua" "vim.keymap.set('n', '<leader>hP'"
+contains "$ROOT/nvim/lua/kickstart/plugins/neo-tree.lua" "gh = 'show_help'"
+contains "$ROOT/nvim/lua/kickstart/plugins/neo-tree.lua" "gf = 'fuzzy_finder'"
+contains "$ROOT/nvim/init.lua" "'typescript', 'vim', 'vimdoc',"
 absent "$ROOT/nvim/init.lua" 'folke/tokyonight.nvim'
 contains "$ROOT/nvim/init.lua" "require 'kickstart.plugins.neo-tree'"
 contains "$ROOT/nvim/lua/kickstart/plugins/neo-tree.lua" 'nvim-neo-tree/neo-tree.nvim'

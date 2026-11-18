@@ -24,8 +24,11 @@ zvm_after_init() {
   # Ctrl+F -> fzf file picker (no hidden files)
   bindkey '^F' _fzf_file_no_hidden
 
-  # Ctrl+\ -> toggle autosuggestions (useful for screen recordings)
-  bindkey '^\' autosuggest-toggle
+  # Ctrl+S is XOFF on some terminals; disable flow control so ZLE receives it.
+  if [[ -t 0 ]]; then
+    stty -ixon
+  fi
+  bindkey '^S' autosuggest-toggle
 
   # Up/Down -> history search by substring (^[[A/^[[B are up/down arrow escape codes)
   bindkey '^[[A' history-substring-search-up

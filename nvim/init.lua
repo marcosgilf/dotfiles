@@ -312,21 +312,22 @@ do
     -- gitsigns.nvim's recommended keymaps:
     on_attach = function(bufnr)
       -- Navigation
-      vim.keymap.set('n', ']c', function()
+      -- Use letter-based leader bindings instead of bracket keys.
+      vim.keymap.set('n', '<leader>hn', function()
         if vim.wo.diff then
           vim.cmd.normal { ']c', bang = true }
         else
           gitsigns.nav_hunk 'next'
         end
-      end, { desc = 'Jump to next git [c]hange', buf = bufnr })
+      end, { desc = 'Jump to next git hunk', buf = bufnr })
 
-      vim.keymap.set('n', '[c', function()
+      vim.keymap.set('n', '<leader>hP', function()
         if vim.wo.diff then
           vim.cmd.normal { '[c', bang = true }
         else
           gitsigns.nav_hunk 'prev'
         end
-      end, { desc = 'Jump to previous git [c]hange', buf = bufnr })
+      end, { desc = 'Jump to previous git hunk', buf = bufnr })
 
       -- Visual mode actions
       vim.keymap.set('v', '<leader>hs', function() gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = 'git [s]tage hunk', buf = bufnr })
