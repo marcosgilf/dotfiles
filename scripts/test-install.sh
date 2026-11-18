@@ -3,7 +3,14 @@ set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 TMP=$(mktemp -d "${TMPDIR:-/tmp}/dotfiles-test.XXXXXX")
-trap 'rm -rf "$TMP"' EXIT HUP INT TERM
+cleanup() {
+  if [ -f "$TMP/nvim-init.lua.before" ]; then
+    cp "$TMP/nvim-init.lua.before" "$ROOT/nvim/init.lua"
+  fi
+  rm -rf "$TMP"
+}
+trap cleanup EXIT HUP INT TERM
+cp "$ROOT/nvim/init.lua" "$TMP/nvim-init.lua.before"
 BIN="$TMP/bin"
 FAKE_BREW_PREFIX="$TMP/homebrew"
 mkdir -p "$BIN" "$FAKE_BREW_PREFIX/opt/nvm"
@@ -142,6 +149,7 @@ printf 'y\ny\ny\ny\n' > "$TMP/plugin-answers"
 fresh_home="$TMP/fresh"
 fresh_log="$TMP/fresh-log"
 mkdir -p "$fresh_home" "$fresh_log"
+printf '\nvim.g.render_tail_test = true\n' >> "$ROOT/nvim/init.lua"
 run_installer "$fresh_home" "$TMP/fresh.out" system system 0 "$fresh_log"
 contains "$TMP/fresh.out" 'Optional dependencies updated'
 contains "$TMP/fresh.out" 'Brewfile dependencies updated'
@@ -161,8 +169,13 @@ grep -Fx '22' "$fresh_home/.nvm/alias/default" >/dev/null
 [ "$(readlink "$fresh_home/.config/nvim")" = "$ROOT/nvim" ]
 contains "$ROOT/nvim/init.lua" 'bg = "#1a1b26"'
 contains "$ROOT/nvim/init.lua" 'fg = "#a9b1d6"'
+contains "$ROOT/nvim/init.lua" 'vim.g.have_nerd_font = true'
+absent "$ROOT/nvim/init.lua" 'folke/tokyonight.nvim'
+contains "$ROOT/nvim/init.lua" "require 'kickstart.plugins.neo-tree'"
+contains "$ROOT/nvim/lua/kickstart/plugins/neo-tree.lua" 'nvim-neo-tree/neo-tree.nvim'
 absent "$ROOT/nvim/init.lua" '@BACKGROUND@'
 absent "$ROOT/nvim/init.lua" 'require("config.lazy")'
+contains "$ROOT/nvim/init.lua" 'vim.g.render_tail_test = true'
 [ ! -e "$fresh_home/.local/share/nvim/lazy" ]
 contains "$fresh_log/curl" 'pi.dev/install.sh'
 contains "$fresh_log/managed" 'managed install invoked'
@@ -175,6 +188,7 @@ contains "$fresh_log/brew" 'upgrade --cask handy'
 contains "$fresh_log/brew" 'upgrade --cask font-jetbrains-mono-nerd-font'
 contains "$fresh_home/.config/mac-setup/zsh-plugins" 'zsh-autosuggestions'
 contains "$fresh_home/.config/mac-setup/zsh-plugins" 'fast-syntax-highlighting'
+cp "$TMP/nvim-init.lua.before" "$ROOT/nvim/init.lua"
 
 # Handy is optional and installs through its Homebrew cask.
 handy_home="$TMP/handy"

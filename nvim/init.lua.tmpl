@@ -1,7 +1,12 @@
+-- vim: set ft=lua syntax=lua:
 -- Generated from theme/tokyo-night.sh. Do not edit.
 vim.o.termguicolors = true
 vim.o.background = "dark"
 
+-- Kickstart Section 1 override: this terminal uses a Nerd Font.
+vim.g.have_nerd_font = true
+
+-- Kickstart Section 4 Colorscheme override: use the shared palette instead of a theme plugin.
 vim.api.nvim_set_hl(0, "Normal", { fg = "@FOREGROUND@", bg = "@BACKGROUND@" })
 vim.api.nvim_set_hl(0, "NormalFloat", { fg = "@FOREGROUND@", bg = "@DARK_BACKGROUND@" })
 vim.api.nvim_set_hl(0, "Comment", { fg = "@DARK_FOREGROUND@" })
@@ -25,3 +30,5 @@ vim.api.nvim_set_hl(0, "DiagnosticError", { fg = "@RED@" })
 vim.api.nvim_set_hl(0, "DiagnosticWarn", { fg = "@YELLOW@" })
 vim.api.nvim_set_hl(0, "DiagnosticInfo", { fg = "@BLUE@" })
 vim.api.nvim_set_hl(0, "DiagnosticHint", { fg = "@CYAN@" })
+
+-- BEGIN LOCAL CONFIG (preserved)
