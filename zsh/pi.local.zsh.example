@@ -1,0 +1,4 @@
+# Copy to pi.local.zsh and replace these paths with your local project folders.
+PI_PROFILE_1_ROOT="$HOME/Repos/project-one"
+PI_PROFILE_2_ROOT="$HOME/Repos/project-two"
+PI_DOTFILES_ROOT="$HOME/dotfiles"

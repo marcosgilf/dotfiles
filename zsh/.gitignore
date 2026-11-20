@@ -9,6 +9,7 @@ plugins/
 
 # Machine-local overrides
 local.zsh
+pi.local.zsh
 .zprofile
 
 # Generated theme config
