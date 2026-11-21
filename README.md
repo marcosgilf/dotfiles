@@ -143,10 +143,11 @@ paths out of Git by copying the example to the ignored local config:
 cp zsh/pi.local.zsh.example zsh/pi.local.zsh
 ```
 
-Set the two profile roots and dotfiles root in `zsh/pi.local.zsh`. Each profile
-uses its project's `.pi/agent` directory; running Pi from the dotfiles directory
-uses profile 2. The wrapper also clears profile-specific credential and session
-environment variables before launching Pi.
+Set `PI_WORK_ROOT` in `zsh/pi.local.zsh`. Inside that folder and its subfolders,
+Pi uses the work profile and starts at the work root, so sessions stay in the
+same `.pi/agent/sessions/` tree. From every other location, Pi uses your personal
+profile in `~/.pi/agent`. The wrapper clears profile-specific credential and
+session environment variables before launch.
 
 ## Update
 

@@ -90,36 +90,24 @@ source "$ZDOTDIR/prompt.zsh"
 # Bun completions
 [[ -s "$BUN_INSTALL/_bun" ]] && source "$BUN_INSTALL/_bun"
 
-# Optional machine-local Pi profile paths.
+# Optional machine-local Pi work root; all other directories use the personal profile.
 [[ -r "$ZDOTDIR/pi.local.zsh" ]] && source "$ZDOTDIR/pi.local.zsh"
 
-# Route Pi using paths from the ignored local config.
 pi() {
-  local cwd profile_1_root="" profile_2_root="" dotfiles_root=""
+  local cwd work_root=""
   cwd="$(pwd -P)"
-  [[ -n "${PI_PROFILE_1_ROOT:-}" ]] && profile_1_root="${PI_PROFILE_1_ROOT:A}"
-  [[ -n "${PI_PROFILE_2_ROOT:-}" ]] && profile_2_root="${PI_PROFILE_2_ROOT:A}"
-  [[ -n "${PI_DOTFILES_ROOT:-}" ]] && dotfiles_root="${PI_DOTFILES_ROOT:A}"
+  [[ -n "${PI_WORK_ROOT:-}" ]] && work_root="${PI_WORK_ROOT:A}"
 
-  if [[ -n "$profile_1_root" && ( "$cwd" == "$profile_1_root" || "$cwd" == "$profile_1_root/"* ) ]]; then
+  if [[ -n "$work_root" && ( "$cwd" == "$work_root" || "$cwd" == "$work_root/"* ) ]]; then
     (
       unset OPENAI_API_KEY OPENROUTER_API_KEY RADIUS_API_KEY PI_CODING_AGENT_SESSION_DIR
-      cd "$profile_1_root" || exit
-      PI_CODING_AGENT_DIR="$profile_1_root/.pi/agent" command pi "$@"
-    )
-  elif [[ -n "$profile_2_root" && ( "$cwd" == "$profile_2_root" || "$cwd" == "$profile_2_root/"* ) ]]; then
-    (
-      unset COPILOT_GITHUB_TOKEN RADIUS_API_KEY PI_CODING_AGENT_SESSION_DIR
-      cd "$profile_2_root" || exit
-      PI_CODING_AGENT_DIR="$profile_2_root/.pi/agent" command pi "$@"
-    )
-  elif [[ -n "$dotfiles_root" && -n "$profile_2_root" && ( "$cwd" == "$dotfiles_root" || "$cwd" == "$dotfiles_root/"* ) ]]; then
-    (
-      unset COPILOT_GITHUB_TOKEN RADIUS_API_KEY PI_CODING_AGENT_SESSION_DIR
-      PI_CODING_AGENT_DIR="$profile_2_root/.pi/agent" command pi "$@"
+      cd "$work_root" || exit
+      PI_CODING_AGENT_DIR="$work_root/.pi/agent" command pi "$@"
     )
   else
-    print -u2 "pi: current directory does not match a configured profile"
-    return 2
+    (
+      unset COPILOT_GITHUB_TOKEN RADIUS_API_KEY PI_CODING_AGENT_SESSION_DIR
+      PI_CODING_AGENT_DIR="$HOME/.pi/agent" command pi "$@"
+    )
   fi
 }
