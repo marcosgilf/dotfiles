@@ -134,6 +134,21 @@ colors from the shared theme file. Add plugins and other settings in
 `nvim/init.lua.tmpl` when needed; rerun `scripts/render-configs.sh` to apply
 changes.
 
+### Pi profiles
+
+`pi` selects a Pi agent profile from the current directory. Keep private project
+paths out of Git by copying the example to the ignored local config:
+
+```sh
+cp zsh/pi.local.zsh.example zsh/pi.local.zsh
+```
+
+Set `PI_WORK_ROOT` in `zsh/pi.local.zsh`. Inside that folder and its subfolders,
+Pi uses the work profile and starts at the work root, so sessions stay in the
+same `.pi/agent/sessions/` tree. From every other location, Pi uses your personal
+profile in `~/.pi/agent`. The wrapper clears profile-specific credential and
+session environment variables before launch.
+
 ## Update
 
 ```sh
@@ -154,6 +169,7 @@ temporary home directories.
 ## Privacy boundary
 
 Only portable configuration belongs here. Never add shell history, cloud or
-Git credentials, Herdr sessions/logs, local environment files, private keys,
-or work-specific commands. Put machine-only functions in
-`zsh/functions/local/`; that directory is ignored.
+Git credentials, Herdr sessions/logs, local environment files, or private keys.
+Pi profile routing stays generic; keep private project paths in the ignored
+`zsh/pi.local.zsh`. Put other machine-only functions in `zsh/functions/local/`;
+that directory is ignored.
