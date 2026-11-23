@@ -315,7 +315,7 @@ bun_path_home="$TMP/bun-path"
 mkdir -p "$bun_path_home/.bun/bin"
 printf '#!/bin/sh\nexit 0\n' > "$bun_path_home/.bun/bin/bun"
 chmod +x "$bun_path_home/.bun/bin/bun"
-HOME="$bun_path_home" XDG_CONFIG_HOME="$bun_path_home/.config" ZDOTDIR="$ROOT/zsh" \
+HOME="$bun_path_home" BUN_INSTALL= XDG_CONFIG_HOME="$bun_path_home/.config" ZDOTDIR="$ROOT/zsh" \
   PATH=/usr/bin:/bin /bin/zsh -c '[[ "$(command -v bun)" == "$HOME/.bun/bin/bun" ]]'
 
 # Older active Node warns, skips Pi, and does not change the existing default.

@@ -89,3 +89,25 @@ source "$ZDOTDIR/prompt.zsh"
 
 # Bun completions
 [[ -s "$BUN_INSTALL/_bun" ]] && source "$BUN_INSTALL/_bun"
+
+# Optional machine-local Pi work root; all other directories use the personal profile.
+[[ -r "$ZDOTDIR/pi.local.zsh" ]] && source "$ZDOTDIR/pi.local.zsh"
+
+pi() {
+  local cwd work_root=""
+  cwd="$(pwd -P)"
+  [[ -n "${PI_WORK_ROOT:-}" ]] && work_root="${PI_WORK_ROOT:A}"
+
+  if [[ -n "$work_root" && ( "$cwd" == "$work_root" || "$cwd" == "$work_root/"* ) ]]; then
+    (
+      unset OPENAI_API_KEY OPENROUTER_API_KEY RADIUS_API_KEY PI_CODING_AGENT_SESSION_DIR
+      cd "$work_root" || exit
+      PI_CODING_AGENT_DIR="$work_root/.pi/agent" command pi "$@"
+    )
+  else
+    (
+      unset COPILOT_GITHUB_TOKEN RADIUS_API_KEY PI_CODING_AGENT_SESSION_DIR
+      PI_CODING_AGENT_DIR="$HOME/.pi/agent" command pi "$@"
+    )
+  fi
+}

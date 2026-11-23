@@ -1,0 +1,2 @@
+# Copy to pi.local.zsh and set your private work project root.
+PI_WORK_ROOT="$HOME/Repos/work-project"
