@@ -18,6 +18,7 @@ Bracketed letters in labels are mnemonics, not keys to type.
 | `Ctrl+Insert` | Copy to clipboard |
 | `Shift+Enter` | Send modified Enter (`CSI-u`) to terminal app |
 | `⌘Option+Shift+Arrow` | Resize Ghostty split (dotfiles binding) |
+| `⌘Ctrl+h/j/k/l` | Focus Ghostty split left / down / up / right (nvim-style) |
 
 ### Common macOS defaults
 
@@ -48,8 +49,9 @@ Other Ghostty defaults that can capture direct `⌘` proposals:
 | `⌘Ctrl+F` / `⌘Shift+V` | Full screen / paste from selection |
 
 Dotfiles unbind the default `⌘Ctrl+Arrow` resize keys and replace them with
-`⌘Option+Shift+Arrow`. Herdr uses separate `Ctrl+Option` shortcuts, so Ghostty
-keeps control of its own tabs and splits.
+`⌘Option+Shift+Arrow`. Ghostty split navigation uses `⌘Ctrl+h/j/k/l`, avoiding
+layout-dependent brackets. Herdr keeps its separate `Ctrl+Option` navigation
+shortcuts.
 
 Run `ghostty +list-keybinds --default` to inspect defaults for your installed
 Ghostty version.
@@ -66,6 +68,7 @@ active bindings.
 | `prefix+p` / `prefix+n` | [p]revious / [n]ext tab |
 | `prefix+1..9` | Switch tab |
 | `prefix+h/j/k/l` | Focus pane left / down / up / right |
+| `prefix+v` | Enter copy mode to browse and copy pane scrollback |
 | `prefix+d` / `prefix+shift+d` | Split right / split [d]own |
 | `prefix+z` / `prefix+x` | Zoom / close pane |
 | `prefix+shift+p` | Workspace [p]icker |
@@ -85,7 +88,8 @@ Direct shortcuts use `Ctrl+Option` on macOS (`alt` in Herdr config):
 
 These assignments replace conflicting Herdr defaults: new tab moves from
 `prefix+c` to `prefix+t`; split right/down move from `prefix+v` / `prefix+minus`
-to `prefix+d` / `prefix+shift+d`; and close tab moves to `prefix+shift+t`.
+to `prefix+d` / `prefix+shift+d`; copy mode moves from `prefix+[` to `prefix+v`;
+and close tab moves to `prefix+shift+t`.
 Workspace picker, new workspace, and close workspace use `prefix+shift+p`,
 `prefix+w`, and `prefix+shift+w`. Rename tab, workspace, and pane move to
 `prefix+shift+e/a/x` to free the reused default bindings.
