@@ -276,6 +276,7 @@ fi
 preserve_local_zsh
 
 link_config "$ROOT/zsh" "$ZSH_DIR"
+link_config "$ROOT/zsh/bin/pi" "$HOME/.local/bin/pi"
 if [[ ! -f "$PLUGIN_SELECTION" ]]; then
   mkdir -p "${PLUGIN_SELECTION:h}"
   : > "$PLUGIN_SELECTION"
