@@ -185,6 +185,7 @@ absent "$TMP/fresh.out" '`brew bundle` complete!'
 contains "$TMP/fresh.out" 'Install complete.'
 grep -Fx '22' "$fresh_home/.nvm/alias/default" >/dev/null
 [ "$(readlink "$fresh_home/.config/nvim")" = "$ROOT/nvim" ]
+[ "$(readlink "$fresh_home/.local/bin/pi")" = "$ROOT/zsh/bin/pi" ]
 contains "$ROOT/nvim/init.lua" 'bg = "#1a1b26"'
 contains "$ROOT/nvim/init.lua" 'fg = "#a9b1d6"'
 contains "$ROOT/nvim/init.lua" 'vim.g.have_nerd_font = true'
@@ -349,4 +350,5 @@ contains "$TMP/uninstall.out" 'Would uninstall cask: font-jetbrains-mono-nerd-fo
 contains "$TMP/uninstall.out" 'Would uninstall formula: bun'
 absent "$TMP/uninstall.out" 'Neovim plugins'
 
+"$ROOT/scripts/test-pi-wrapper.sh"
 printf 'Installer smoke tests passed.\n'

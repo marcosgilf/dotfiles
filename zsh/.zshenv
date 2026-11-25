@@ -26,9 +26,6 @@ export GPG_TTY=$(tty)
 export STARSHIP_CONFIG="$ZDOTDIR/starship.toml"
 
 # ---------- PATH ----------
-# Personal binaries/scripts
-export PATH="$HOME/.local/bin:$PATH"
-
 # Bun
 export BUN_INSTALL="${BUN_INSTALL:-$HOME/.bun}"
 case ":$PATH:" in
@@ -60,3 +57,10 @@ case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
+
+# Keep personal shims ahead of Homebrew binaries.
+export PATH="$HOME/.local/bin:$PATH"
+
+# Load local Pi profile settings for interactive and non-interactive shells.
+[[ -r "$ZDOTDIR/pi.local.zsh" ]] && source "$ZDOTDIR/pi.local.zsh"
+[[ -n "${PI_WORK_ROOT:-}" ]] && export PI_WORK_ROOT

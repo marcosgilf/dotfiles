@@ -1,0 +1,30 @@
+#!/bin/sh
+
+cwd=$(pwd -P) || exit 1
+work_root=${PI_WORK_ROOT:-}
+
+if [ -n "$work_root" ]; then
+  case "$work_root" in
+    /*) ;;
+    *) work_root=$cwd/$work_root ;;
+  esac
+  work_root=$(CDPATH= cd -P "$work_root" 2>/dev/null && pwd -P) || work_root=
+fi
+
+in_work_root=
+if [ -n "$work_root" ]; then
+  case "$cwd/" in
+    "$work_root/"*) in_work_root=1 ;;
+  esac
+fi
+
+if [ "$in_work_root" = 1 ]; then
+  unset OPENAI_API_KEY OPENROUTER_API_KEY RADIUS_API_KEY PI_CODING_AGENT_SESSION_DIR
+  PI_CODING_AGENT_DIR="$work_root/.pi/agent"
+else
+  unset COPILOT_GITHUB_TOKEN RADIUS_API_KEY PI_CODING_AGENT_SESSION_DIR
+  PI_CODING_AGENT_DIR="$HOME/.pi/agent"
+fi
+export PI_CODING_AGENT_DIR
+
+exec "$HOME/.pi/agent/bin/pi" "$@"
