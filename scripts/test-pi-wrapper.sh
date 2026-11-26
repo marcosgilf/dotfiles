@@ -5,7 +5,8 @@ ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 TMP=$(mktemp -d "${TMPDIR:-/tmp}/pi-wrapper-test.XXXXXX")
 trap 'rm -rf "$TMP"' EXIT HUP INT TERM
 
-mkdir -p "$TMP/home/.pi/agent/bin" "$TMP/work/repo" "$TMP/work-sibling" "$TMP/zsh-config"
+mkdir -p "$TMP/home/.pi/agent/bin" "$TMP/home/.local/bin" "$TMP/work/repo" "$TMP/work-sibling" "$TMP/zsh-config"
+ln -s "$ROOT/zsh/bin/pi" "$TMP/home/.local/bin/pi"
 cat > "$TMP/home/.pi/agent/bin/pi" <<'EOF'
 #!/bin/sh
 printf 'cwd=%s\n' "$PWD"
@@ -54,10 +55,12 @@ assert_contains "$personal_output" 'copilot=unset'
 assert_contains "$personal_output" 'radius=unset'
 assert_contains "$personal_output" 'session=unset'
 
+ln -s "$ROOT/zsh/.zshenv" "$TMP/zsh-config/.zshenv"
+ln -s "$ROOT/zsh/.zprofile" "$TMP/zsh-config/.zprofile"
 printf 'PI_WORK_ROOT="%s"\n' "$TMP/work" > "$TMP/zsh-config/pi.local.zsh"
-loaded_root=$(env -i HOME="$TMP/home" ZDOTDIR="$TMP/zsh-config" ROOT="$ROOT" \
-  PATH=/usr/bin:/bin \
-  /bin/zsh -f -c 'source "$ROOT/zsh/.zshenv"; [[ "${path[1]}" == "$HOME/.local/bin" ]] || exit 1; /usr/bin/env' \
+loaded_root=$(env -i HOME="$TMP/home" ZDOTDIR="$TMP/zsh-config" \
+  EXPECTED_WORK_ROOT="$TMP/work" PATH=/usr/bin:/bin \
+  /bin/zsh -lc '[[ "${path[1]}" == "$HOME/.local/bin" && "$(command -v pi)" == "$HOME/.local/bin/pi" ]] || exit 1; /bin/sh -c '\''[ "$PI_WORK_ROOT" = "$EXPECTED_WORK_ROOT" ] && [ "$(command -v pi)" = "$HOME/.local/bin/pi" ]'\'' || exit 1; /usr/bin/env' \
   | grep '^PI_WORK_ROOT=')
 [ "$loaded_root" = "PI_WORK_ROOT=$TMP/work" ]
 

@@ -1,66 +1,16 @@
-# ~/.config/zsh/.zshenv
+# Runs for every Zsh process. Keep this file fast and non-interactive.
 
-# ---------- XDG base directories ----------
-# Centralizes config/cache/data locations
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-export XDG_CACHE_HOME="$HOME/.cache"
-export XDG_DATA_HOME="$HOME/.local/share"
-export XDG_STATE_HOME="$HOME/.local/state"
+# XDG base directories. XDG_CONFIG_HOME and ZDOTDIR come from bootstrap/zshenv.
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 
-# ---------- Editor ----------
-# Default editor used by git, crontab, etc.
+# Defaults used by interactive and login-shell setup.
 export EDITOR="nvim"
 export VISUAL="nvim"
-
-# ---------- Pager ----------
-if command -v bat >/dev/null 2>&1; then
-  export MANPAGER="bat -l man -p"
-elif command -v batcat >/dev/null 2>&1; then
-  export MANPAGER="batcat -l man -p"
-fi
-
-# ---------- GPG ----------
-export GPG_TTY=$(tty)
-
-# ---------- Starship ----------
-export STARSHIP_CONFIG="$ZDOTDIR/starship.toml"
-
-# ---------- PATH ----------
-# Bun
 export BUN_INSTALL="${BUN_INSTALL:-$HOME/.bun}"
-case ":$PATH:" in
-  *":$BUN_INSTALL/bin:"*) ;;
-  *) export PATH="$BUN_INSTALL/bin:$PATH" ;;
-esac
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 
-# Cargo
-[[ -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
-
-# Local environment
-[[ -r "$HOME/.local/bin/env" ]] && source "$HOME/.local/bin/env"
-
-# Homebrew (macOS / Apple Silicon)
-if [[ -x /opt/homebrew/bin/brew ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
-
-# Node / Homebrew NVM
-export NVM_DIR="$HOME/.nvm"
-if [[ -n "${HOMEBREW_PREFIX:-}" && -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ]]; then
-  source "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
-fi
-
-
-# pnpm
-export PNPM_HOME="$HOME/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-
-# Keep personal shims ahead of Homebrew binaries.
-export PATH="$HOME/.local/bin:$PATH"
-
-# Load local Pi profile settings for interactive and non-interactive shells.
+# Optional project root for the Pi shim; export it to child processes.
 [[ -r "$ZDOTDIR/pi.local.zsh" ]] && source "$ZDOTDIR/pi.local.zsh"
 [[ -n "${PI_WORK_ROOT:-}" ]] && export PI_WORK_ROOT
