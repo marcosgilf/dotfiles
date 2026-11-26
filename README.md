@@ -119,6 +119,64 @@ Installer:
 
 Keep this repository at a stable path because managed symlinks point into it.
 
+## macOS and Zsh startup
+
+### macOS processes and environments
+
+At high level, the kernel starts system `launchd`. After sign-in, per-user
+`launchd` manages agents and GUI apps. These processes do not read Zsh startup
+files. An app started from Finder or Spotlight gets its environment from
+`launchd`; an app started from a terminal inherits that shell's environment.
+Configure launchd jobs in their launchd settings, not in `.zshrc`.
+
+Terminal apps such as Ghostty create shell processes. Zsh then reads startup
+files according to login and interactive mode. macOS `/etc/zprofile` runs
+`path_helper`, which builds `PATH` from `/etc/paths*` and `MANPATH` from
+`/etc/manpaths*` before the user's `.zprofile`. This is why Homebrew and personal
+PATH priority belong in `.zprofile`.
+
+| How tool starts | Startup behavior |
+| --- | --- |
+| Finder, Spotlight, or launchd job | Uses launchd environment; only a child Zsh reads Zsh files. |
+| Terminal app | Starts its configured shell; login and interactive settings choose files below. |
+| Terminal manager starts a login command shell | `.zshenv` and `.zprofile`; `.zshrc` only in interactive mode. |
+| `sh -c` child of Zsh | No Zsh files; inherits exported variables and `PATH`. |
+
+Terminal managers and other launchers pass their environment to child
+processes. A child shell can load updated startup files, but an already-running
+app or process keeps its old environment. Restart that app when a direct command
+depends on its inherited environment.
+
+### Zsh startup files
+
+Zsh reads different files for different shell types. Startup order on macOS:
+
+1. Every Zsh process reads `/etc/zshenv`, then `~/.zshenv`. The installer links
+   `~/.zshenv` to `bootstrap/zshenv`; it sets `XDG_CONFIG_HOME` and `ZDOTDIR`,
+   then loads `zsh/.zshenv`.
+2. Login shells read `/etc/zprofile`, then `$ZDOTDIR/.zprofile`. macOS runs
+   `path_helper` from `/etc/zprofile`, so this repo sets Homebrew and runtime
+   paths here and puts `~/.local/bin` first at the end. This makes the `pi`
+   shim win over Homebrew's Pi executable. Start command shells as login shells
+   so `.zprofile` runs.
+3. Interactive shells read `/etc/zshrc`, then `$ZDOTDIR/.zshrc`. Keep prompts,
+   plugins, completions, aliases, history, and keybindings here. NVM is loaded
+   here only when a non-login interactive shell has not loaded it already.
+   Non-interactive commands do not read this file.
+4. Login shells read `$ZDOTDIR/.zlogin` after other applicable startup files,
+   then run `.zlogout` when they exit. This setup does not need either file.
+
+Keep `.zshenv` fast: it runs for every Zsh process, including scripts. This repo
+uses it for shared environment values and private Pi profile settings. `sh` does
+not read Zsh startup files; it inherits exported variables and `PATH` from its
+parent. A POSIX login shell may read `~/.profile`; Zsh does not, and this repo
+leaves that file unmanaged. A direct process launch that bypasses a Zsh login
+shell must provide required values itself.
+
+Homebrew paths in `.zprofile` cover Apple Silicon and Intel defaults. Change
+them if Homebrew uses a custom prefix. Keep machine-specific project paths in
+ignored `zsh/pi.local.zsh`, not in shared startup files.
+
 ## Use
 
 ```sh
@@ -143,12 +201,18 @@ paths out of Git by copying the example to the ignored local config:
 cp zsh/pi.local.zsh.example zsh/pi.local.zsh
 ```
 
-Set `PI_WORK_ROOT` in `zsh/pi.local.zsh`. Zsh loads this setting in interactive
-and non-interactive shells. The `~/.local/bin/pi` shim selects the work profile
-inside that folder and its subfolders, and keeps the current directory. From
-every other location, Pi uses your personal profile in `~/.pi/agent`. The shim
-clears profile-specific credential and session environment variables before
-launch.
+Set `PI_WORK_ROOT` in `zsh/pi.local.zsh`. Zsh exports it to child processes.
+The `~/.local/bin/pi` shim selects the work profile when its current directory
+is inside that root, and keeps the current directory. From other locations, Pi
+uses your personal profile in `~/.pi/agent`. The shim clears profile-specific
+credential and session environment variables before launch.
+
+Profile selection belongs to the `pi` shim, not to a specific terminal manager.
+A manager only needs to preserve the project directory and launch `pi`. Herdr
+and other shell or multiplexer tools can start a login Zsh in that directory.
+Scripts or direct launchers must inherit or pass `PI_WORK_ROOT` and `PATH` to
+their child process; `sh` does not read Zsh startup files. Keep the launch
+directory unchanged so Pi can detect the correct profile.
 
 ## Update
 

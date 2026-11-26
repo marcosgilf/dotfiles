@@ -8,6 +8,20 @@
 #   CLI tools:    eza, bat, nvim, ripgrep
 #   Node:         nvm
 
+# Interactive-only environment.
+if command -v bat >/dev/null 2>&1; then
+  export MANPAGER="bat -l man -p"
+elif command -v batcat >/dev/null 2>&1; then
+  export MANPAGER="batcat -l man -p"
+fi
+[[ -t 0 ]] && export GPG_TTY="$(tty)"
+export STARSHIP_CONFIG="$ZDOTDIR/starship.toml"
+
+# Load nvm in interactive non-login shells; login shells already load it in .zprofile.
+if (( ! $+functions[nvm] )) && [[ -n "${HOMEBREW_PREFIX:-}" && -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ]]; then
+  source "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
+fi
+
 # =========================================================
 # History
 # =========================================================
